@@ -82,20 +82,18 @@ public class Parser {
     // 文本匹配
     public boolean match(String context) {
         // symbol栈
-        LinkedList<Symbol> stack = new LinkedList<>();
+        LinkedList<Symbol> symbolStack = new LinkedList<>();
         // 栈底为END($)
-        stack.push(Terminal.END);
+        symbolStack.push(Terminal.END);
         // 初始栈顶为Start Symbol
-        stack.push(NonTerminal.PROGRAM);
+        symbolStack.push(NonTerminal.PROGRAM);
 
         // 文本以空格作为分隔符分为多个token，每个token都是终结符，在列表尾部添加END($)作为结尾
-        List<Terminal> tokenList = new ArrayList<>();
-        for(String token : Arrays.asList(context.split(" ")))
-            tokenList.add(new Terminal(token));
-        tokenList.add(Terminal.END);
+        LinkedList<Terminal> tokenStack = new LinkedList<>();
+        for(String token : context.split(" "))
+            tokenStack.add(new Terminal(token));
+        tokenStack.add(Terminal.END);
 
-        // 从第一个token开始匹配
-        int tokenIndex = 0;
         /*
          * 最终情况1：匹配直到栈空，匹配成功；
          * 最终情况2：匹配完所有token，但栈未空，匹配失败；
@@ -103,11 +101,11 @@ public class Parser {
          * 最终情况4：栈顶为非终结符，token不是栈顶非终结符的起始终结符，匹配失败；
          */
         // 匹配直到栈为空或者tokenList为空为止
-        while(!stack.isEmpty() && tokenIndex < tokenList.size()) {
+        while(!symbolStack.isEmpty() && !tokenStack.isEmpty()) {
             // 获取栈顶符号
-            Symbol top = stack.peek();
+            Symbol top = symbolStack.peek();
             // 获取当前的token
-            Terminal token = tokenList.get(tokenIndex);
+            Terminal token = tokenStack.peek();
             /*
              * 如果栈顶是终结符，则存在三种情况
              * 情况1：top == token 移除栈顶，当前token已被匹配掉；
@@ -116,10 +114,10 @@ public class Parser {
              */
             if(top instanceof Terminal) {
                 if(Terminal.EMPTY.equals(top)){
-                    stack.pop();
+                    symbolStack.pop();
                 } else if(token.equals(top)) {
-                    stack.pop();
-                    tokenIndex++;
+                    symbolStack.pop();
+                    tokenStack.pop();
                 } else {
                     return false;
                 }
@@ -129,13 +127,13 @@ public class Parser {
              * 情况2：该产生式存在，则移除栈顶，将产生式右侧的符号列表以从右到左的顺序压栈，并将产生式加入产生式列表
              */
             } else {
-                ProductionsRule rule = table.get(top).get(token);
+                ProductionsRule rule = table.getOrDefault(top, new HashMap<>()).get(token);
                 if(rule == null)
                     return false;
-                stack.pop();
+                symbolStack.pop();
                 List<Symbol> symbolList = rule.getRight();
                 for (int i = symbolList.size() - 1; i >= 0; i--)
-                    stack.push(symbolList.get(i));
+                    symbolStack.push(symbolList.get(i));
                 ruleList.add(rule);
             }
         }
@@ -147,7 +145,7 @@ public class Parser {
      * @param space tab长度
      */
     public void outputParseTree(int space){
-        recursiveOutputParseTree(new LinkedList<>(Arrays.asList(NonTerminal.PROGRAM)), new LinkedList<>(ruleList), 0, space);
+        recursiveOutputParseTree(new LinkedList<>(Collections.singletonList(NonTerminal.PROGRAM)), new LinkedList<>(ruleList), 0, space);
     }
 
 
