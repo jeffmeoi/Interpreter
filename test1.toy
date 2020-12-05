@@ -1,0 +1,13 @@
+int a=1;
+int int1=2;
+real b=//12312321
+a;
+real c=123.12e2;
+real d=123.12e+1a123;//asdf
+real e1;
+if(a>=b){//erdfc
+    e1 = d;
+}else{
+    e2 = c;
+}
+
