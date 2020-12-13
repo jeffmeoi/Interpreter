@@ -1,10 +1,13 @@
-package com.jeff.llparser;
+package com.jeff.parser.ll;
 
-import com.jeff.lex.Token;
+import com.jeff.parser.NonTerminal;
+import com.jeff.parser.ProductionsRule;
+import com.jeff.parser.Symbol;
+import com.jeff.parser.Terminal;
 
 import java.util.*;
 
-public class Parser {
+public class LLParser {
     // parsing table
     private Map<NonTerminal, Map<Terminal, ProductionsRule>> table = new HashMap<>();
     // 输出的产生式列表
@@ -89,10 +92,10 @@ public class Parser {
         symbolStack.push(NonTerminal.PROGRAM);
 
         // 文本以空格作为分隔符分为多个token，每个token都是终结符，在列表尾部添加END($)作为结尾
-        LinkedList<Terminal> tokenStack = new LinkedList<>();
+        LinkedList<Symbol> tokenStack = new LinkedList<>();
         for(String token : context.split(" "))
             tokenStack.add(new Terminal(token));
-        tokenStack.add(Terminal.END);
+        tokenStack.add(Symbol.END);
 
         /*
          * 最终情况1：匹配直到栈空，匹配成功；
@@ -105,7 +108,7 @@ public class Parser {
             // 获取栈顶符号
             Symbol top = symbolStack.peek();
             // 获取当前的token
-            Terminal token = tokenStack.peek();
+            Symbol token = tokenStack.peek();
             /*
              * 如果栈顶是终结符，则存在三种情况
              * 情况1：top == token 移除栈顶，当前token已被匹配掉；
@@ -113,9 +116,7 @@ public class Parser {
              * 情况3：top != token, top != epsilon，匹配失败
              */
             if(top instanceof Terminal) {
-                if(Terminal.EMPTY.equals(top)){
-                    symbolStack.pop();
-                } else if(token.equals(top)) {
+                if(token.equals(top)) {
                     symbolStack.pop();
                     tokenStack.pop();
                 } else {
@@ -126,7 +127,7 @@ public class Parser {
              * 情况1：该产生式不存在，则匹配失败；
              * 情况2：该产生式存在，则移除栈顶，将产生式右侧的符号列表以从右到左的顺序压栈，并将产生式加入产生式列表
              */
-            } else {
+            } else if(top instanceof NonTerminal){
                 ProductionsRule rule = table.getOrDefault(top, new HashMap<>()).get(token);
                 if(rule == null)
                     return false;
@@ -135,6 +136,13 @@ public class Parser {
                 for (int i = symbolList.size() - 1; i >= 0; i--)
                     symbolStack.push(symbolList.get(i));
                 ruleList.add(rule);
+            } else {
+                if(Symbol.EMPTY.equals(top)){
+                    symbolStack.pop();
+                } else if(Symbol.END.equals(top)) {
+                    symbolStack.pop();
+                    tokenStack.pop();
+                }
             }
         }
         return true;

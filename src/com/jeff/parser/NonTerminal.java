@@ -1,4 +1,4 @@
-package com.jeff.llparser;
+package com.jeff.parser;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,21 +24,18 @@ public class NonTerminal extends Symbol{
     public static final NonTerminal SIMPLE_EXPR = new NonTerminal("simpleexpr");
 
     // 非终结符的列表
-    private static final List<NonTerminal> nonTerminalList = Arrays.asList(PROGRAM, STMT, COMPOUND_STMT, STMTS, IF_STMT,
+    public static final List<NonTerminal> nonTerminalList = Arrays.asList(PROGRAM, STMT, COMPOUND_STMT, STMTS, IF_STMT,
             WHILE_STMT, ASSG_STMT, BOOL_EXPR, BOOL_OP, ARITH_EXPR, ARITH_EXPR_PRIME, MULT_EXPR, MULT_EXPR_PRIME, SIMPLE_EXPR);
+
+    static {
+        Symbol.symbolList.addAll(nonTerminalList);
+    }
 
     // 非终结符的构造函数
     public NonTerminal(String value) {
         super(value);
     }
 
-    // 判断字符串的内容是否是非终结符
-    public static boolean isNonTerminal(String token) {
-        for(NonTerminal nonTerminal : nonTerminalList)
-            if(nonTerminal.getValue().equals(token))
-                return true;
-        return false;
-    }
 
     @Override
     public String toString() {

@@ -1,11 +1,18 @@
-package com.jeff.llparser;
+package com.jeff.parser;
 
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 符号，含终结符和非终结符
  */
 public class Symbol {
+    public static final Symbol EMPTY = new Symbol("\u03B5");    // epsilon的utf8编码
+
+    public static final Symbol END = new Symbol("$");
+
+    // 符号列表
+    public static final List<Symbol> symbolList = new LinkedList<>(Arrays.asList(Symbol.EMPTY, Symbol.END));
+
     private String value;
 
     public String getValue() {
@@ -27,5 +34,10 @@ public class Symbol {
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    @Override
+    public String toString() {
+        return "Symbol:" + getValue();
     }
 }
