@@ -80,9 +80,8 @@ public class LRParser {
         return rules;
     }
 
-    public List<ProductionRule> parse(String context) {
-        List<Terminal> tokens = Arrays.asList(context.split("\\s+"))
-                .stream().map(s -> new Terminal(s)).collect(Collectors.toList());
+    public LinkedList<ProductionRule> parse(List<Terminal> tokens) {
+        tokens = new LinkedList<>(tokens);
         tokens.add(Terminal.END);
 
         LinkedList<Symbol> symbolStack = new LinkedList<>();
@@ -126,9 +125,33 @@ public class LRParser {
     public static void main(String[] args) throws IOException {
 
         LRParser parser = new LRParser("start-symbol", "terminals", "non-terminals", "rules");
-        List<ProductionRule> output = parser.parse("{ ID = NUM ; }");
+        String context = "{ ID = NUM ; }";
+        List<Terminal> tokens = Arrays.asList(context.split("\\s+"))
+                .stream().map(s -> new Terminal(s)).collect(Collectors.toList());
+        LinkedList<ProductionRule> output = parser.parse(tokens);
 
-        System.out.println(output);
+        LinkedList<Symbol> symbolList = new LinkedList<>();
+        symbolList.add(output.peek().getLeft());
+
+
+
+        System.out.print(output.peek().getLeft().getValue());
+
+        for(ProductionRule rule : output) {
+            for(int i = symbolList.size() - 1; i >= 0; i--) {
+                if(symbolList.get(i).equals(rule.getLeft())) {
+                    symbolList.remove(i);
+                    if(!rule.getRight().get(0).equals(Symbol.EMPTY))
+                        symbolList.addAll(i, rule.getRight());
+                    break;
+                }
+            }
+            StringBuffer sb = new StringBuffer(" => ");
+            for(Symbol symbol : symbolList)
+                sb.append(symbol.getValue()).append(" ");
+            System.out.print(sb.toString());
+        }
+
     }
 
 }
