@@ -1,4 +1,4 @@
-package com.jeff.lex;
+package com.jeff;
 
 import java.io.*;
 import java.util.List;
@@ -19,18 +19,16 @@ public class FileUtils {
         return new String(bytes);
     }
 
+
     /**
      * 写回文件
      * @param filepath 需要写回的文件路径
-     * @param tokenList 需要写回的token列表
+     * @param string 待输出的字符串
      * @throws IOException 文件io异常
      */
-    public static void writeAll(String filepath, List<Token> tokenList) throws IOException {
+    public static void writeAll(String filepath, String string) throws IOException {
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filepath));
-        for(Token token : tokenList) {
-            bufferedWriter.write(token.toString());
-            bufferedWriter.newLine();
-        }
+        bufferedWriter.write(string);
         bufferedWriter.close();
     }
 

@@ -8,7 +8,7 @@ public class Main {
         // 初始化解释器
         LLParser parser = new LLParser();
         // 解释器匹配，判断字符串是否符合syntax
-        if(parser.match(context)){
+        if(parser.parse(context)){
             // 若匹配，则输出解释树，tab间距为2
             parser.outputParseTree(2);
         } else {

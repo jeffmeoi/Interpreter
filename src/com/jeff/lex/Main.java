@@ -1,5 +1,7 @@
 package com.jeff.lex;
 
+import com.jeff.FileUtils;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +21,13 @@ public class Main {
                 tokenList.add(token);
             }
         }
+        StringBuffer sb = new StringBuffer();
         // 判断token的类型并set
         for(Token token : tokenList) {
             token.setTokenType(LexicalAnalyzer.getTokenType(token.getAttributeValue()));
+            sb.append(token).append(System.lineSeparator());
         }
         // 写回文件
-        FileUtils.writeAll("test1.tok", tokenList);
+        FileUtils.writeAll("test1.tok", sb.toString());
     }
 }

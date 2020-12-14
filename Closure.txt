@@ -1,0 +1,281 @@
+Closure
+I0:
+	goto: {"compoundstmt"=1, "{"=2}
+	program -> . compoundstmt
+	compoundstmt -> . { stmts }
+I1:
+	goto: {}
+	program -> compoundstmt .
+I2:
+	goto: {"stmts"=3, "whilestmt"=6, "assgstmt"=9, "stmt"=7, "ifstmt"=4, "compoundstmt"=5, "{"=2, "ID"=10, "if"=11, "while"=8}
+	stmt -> . ifstmt
+	assgstmt -> . ID = arithexpr ;
+	whilestmt -> . while ( boolexpr ) stmt
+	ifstmt -> . if ( boolexpr ) then stmt else stmt
+	stmts -> . ε
+	stmts -> . stmt stmts
+	compoundstmt -> . { stmts }
+	compoundstmt -> { . stmts }
+	stmt -> . compoundstmt
+	stmt -> . assgstmt
+	stmt -> . whilestmt
+I3:
+	goto: {"}"=56}
+	compoundstmt -> { stmts . }
+I4:
+	goto: {}
+	stmt -> ifstmt .
+I5:
+	goto: {}
+	stmt -> compoundstmt .
+I6:
+	goto: {}
+	stmt -> whilestmt .
+I7:
+	goto: {"stmts"=55, "whilestmt"=6, "assgstmt"=9, "stmt"=7, "ifstmt"=4, "compoundstmt"=5, "{"=2, "ID"=10, "if"=11, "while"=8}
+	stmt -> . ifstmt
+	assgstmt -> . ID = arithexpr ;
+	whilestmt -> . while ( boolexpr ) stmt
+	ifstmt -> . if ( boolexpr ) then stmt else stmt
+	stmts -> . ε
+	stmts -> . stmt stmts
+	stmts -> stmt . stmts
+	compoundstmt -> . { stmts }
+	stmt -> . compoundstmt
+	stmt -> . assgstmt
+	stmt -> . whilestmt
+I8:
+	goto: {"("=51}
+	whilestmt -> while . ( boolexpr ) stmt
+I9:
+	goto: {}
+	stmt -> assgstmt .
+I10:
+	goto: {"="=48}
+	assgstmt -> ID . = arithexpr ;
+I11:
+	goto: {"("=12}
+	ifstmt -> if . ( boolexpr ) then stmt else stmt
+I12:
+	goto: {"multexpr"=17, "NUM"=13, "simpleexpr"=18, "("=14, "ID"=19, "boolexpr"=16, "arithexpr"=15}
+	arithexpr -> . multexpr arithexprprime
+	boolexpr -> . arithexpr boolop arithexpr
+	simpleexpr -> . ( arithexpr )
+	simpleexpr -> . NUM
+	simpleexpr -> . ID
+	ifstmt -> if ( . boolexpr ) then stmt else stmt
+	multexpr -> . simpleexpr multexprprime
+I13:
+	goto: {}
+	simpleexpr -> NUM .
+I14:
+	goto: {"multexpr"=17, "NUM"=13, "simpleexpr"=18, "("=14, "ID"=19, "arithexpr"=46}
+	arithexpr -> . multexpr arithexprprime
+	simpleexpr -> . ( arithexpr )
+	simpleexpr -> ( . arithexpr )
+	simpleexpr -> . NUM
+	simpleexpr -> . ID
+	multexpr -> . simpleexpr multexprprime
+I15:
+	goto: {"<="=42, "boolop"=43, "<"=39, ">"=40, ">="=41, "=="=44}
+	boolop -> . ==
+	boolop -> . >=
+	boolop -> . <=
+	boolop -> . >
+	boolop -> . <
+	boolexpr -> arithexpr . boolop arithexpr
+I16:
+	goto: {")"=34}
+	ifstmt -> if ( boolexpr . ) then stmt else stmt
+I17:
+	goto: {"arithexprprime"=29, "+"=27, "-"=28}
+	arithexpr -> multexpr . arithexprprime
+	arithexprprime -> . ε
+	arithexprprime -> . - multexpr arithexprprime
+	arithexprprime -> . + multexpr arithexprprime
+I18:
+	goto: {"multexprprime"=22, "*"=20, "/"=21}
+	multexprprime -> . ε
+	multexprprime -> . / simpleexpr multexprprime
+	multexprprime -> . * simpleexpr multexprprime
+	multexpr -> simpleexpr . multexprprime
+I19:
+	goto: {}
+	simpleexpr -> ID .
+I20:
+	goto: {"NUM"=13, "simpleexpr"=25, "("=14, "ID"=19}
+	simpleexpr -> . ( arithexpr )
+	simpleexpr -> . NUM
+	simpleexpr -> . ID
+	multexprprime -> * . simpleexpr multexprprime
+I21:
+	goto: {"NUM"=13, "simpleexpr"=23, "("=14, "ID"=19}
+	simpleexpr -> . ( arithexpr )
+	simpleexpr -> . NUM
+	simpleexpr -> . ID
+	multexprprime -> / . simpleexpr multexprprime
+I22:
+	goto: {}
+	multexpr -> simpleexpr multexprprime .
+I23:
+	goto: {"multexprprime"=24, "*"=20, "/"=21}
+	multexprprime -> . ε
+	multexprprime -> . / simpleexpr multexprprime
+	multexprprime -> . * simpleexpr multexprprime
+	multexprprime -> / simpleexpr . multexprprime
+I24:
+	goto: {}
+	multexprprime -> / simpleexpr multexprprime .
+I25:
+	goto: {"multexprprime"=26, "*"=20, "/"=21}
+	multexprprime -> . ε
+	multexprprime -> . / simpleexpr multexprprime
+	multexprprime -> . * simpleexpr multexprprime
+	multexprprime -> * simpleexpr . multexprprime
+I26:
+	goto: {}
+	multexprprime -> * simpleexpr multexprprime .
+I27:
+	goto: {"multexpr"=32, "NUM"=13, "simpleexpr"=18, "("=14, "ID"=19}
+	arithexprprime -> + . multexpr arithexprprime
+	simpleexpr -> . ( arithexpr )
+	simpleexpr -> . NUM
+	simpleexpr -> . ID
+	multexpr -> . simpleexpr multexprprime
+I28:
+	goto: {"multexpr"=30, "NUM"=13, "simpleexpr"=18, "("=14, "ID"=19}
+	simpleexpr -> . ( arithexpr )
+	simpleexpr -> . NUM
+	simpleexpr -> . ID
+	multexpr -> . simpleexpr multexprprime
+	arithexprprime -> - . multexpr arithexprprime
+I29:
+	goto: {}
+	arithexpr -> multexpr arithexprprime .
+I30:
+	goto: {"arithexprprime"=31, "+"=27, "-"=28}
+	arithexprprime -> - multexpr . arithexprprime
+	arithexprprime -> . ε
+	arithexprprime -> . - multexpr arithexprprime
+	arithexprprime -> . + multexpr arithexprprime
+I31:
+	goto: {}
+	arithexprprime -> - multexpr arithexprprime .
+I32:
+	goto: {"arithexprprime"=33, "+"=27, "-"=28}
+	arithexprprime -> + multexpr . arithexprprime
+	arithexprprime -> . ε
+	arithexprprime -> . - multexpr arithexprprime
+	arithexprprime -> . + multexpr arithexprprime
+I33:
+	goto: {}
+	arithexprprime -> + multexpr arithexprprime .
+I34:
+	goto: {"then"=35}
+	ifstmt -> if ( boolexpr ) . then stmt else stmt
+I35:
+	goto: {"whilestmt"=6, "assgstmt"=9, "stmt"=36, "ifstmt"=4, "compoundstmt"=5, "{"=2, "ID"=10, "if"=11, "while"=8}
+	stmt -> . ifstmt
+	assgstmt -> . ID = arithexpr ;
+	whilestmt -> . while ( boolexpr ) stmt
+	ifstmt -> . if ( boolexpr ) then stmt else stmt
+	compoundstmt -> . { stmts }
+	stmt -> . compoundstmt
+	ifstmt -> if ( boolexpr ) then . stmt else stmt
+	stmt -> . assgstmt
+	stmt -> . whilestmt
+I36:
+	goto: {"else"=37}
+	ifstmt -> if ( boolexpr ) then stmt . else stmt
+I37:
+	goto: {"whilestmt"=6, "assgstmt"=9, "stmt"=38, "ifstmt"=4, "compoundstmt"=5, "{"=2, "ID"=10, "if"=11, "while"=8}
+	ifstmt -> if ( boolexpr ) then stmt else . stmt
+	stmt -> . ifstmt
+	assgstmt -> . ID = arithexpr ;
+	whilestmt -> . while ( boolexpr ) stmt
+	ifstmt -> . if ( boolexpr ) then stmt else stmt
+	compoundstmt -> . { stmts }
+	stmt -> . compoundstmt
+	stmt -> . assgstmt
+	stmt -> . whilestmt
+I38:
+	goto: {}
+	ifstmt -> if ( boolexpr ) then stmt else stmt .
+I39:
+	goto: {}
+	boolop -> < .
+I40:
+	goto: {}
+	boolop -> > .
+I41:
+	goto: {}
+	boolop -> >= .
+I42:
+	goto: {}
+	boolop -> <= .
+I43:
+	goto: {"multexpr"=17, "NUM"=13, "simpleexpr"=18, "("=14, "ID"=19, "arithexpr"=45}
+	arithexpr -> . multexpr arithexprprime
+	simpleexpr -> . ( arithexpr )
+	simpleexpr -> . NUM
+	boolexpr -> arithexpr boolop . arithexpr
+	simpleexpr -> . ID
+	multexpr -> . simpleexpr multexprprime
+I44:
+	goto: {}
+	boolop -> == .
+I45:
+	goto: {}
+	boolexpr -> arithexpr boolop arithexpr .
+I46:
+	goto: {")"=47}
+	simpleexpr -> ( arithexpr . )
+I47:
+	goto: {}
+	simpleexpr -> ( arithexpr ) .
+I48:
+	goto: {"multexpr"=17, "NUM"=13, "simpleexpr"=18, "("=14, "ID"=19, "arithexpr"=49}
+	arithexpr -> . multexpr arithexprprime
+	simpleexpr -> . ( arithexpr )
+	simpleexpr -> . NUM
+	simpleexpr -> . ID
+	assgstmt -> ID = . arithexpr ;
+	multexpr -> . simpleexpr multexprprime
+I49:
+	goto: {";"=50}
+	assgstmt -> ID = arithexpr . ;
+I50:
+	goto: {}
+	assgstmt -> ID = arithexpr ; .
+I51:
+	goto: {"multexpr"=17, "NUM"=13, "simpleexpr"=18, "("=14, "ID"=19, "boolexpr"=52, "arithexpr"=15}
+	arithexpr -> . multexpr arithexprprime
+	boolexpr -> . arithexpr boolop arithexpr
+	simpleexpr -> . ( arithexpr )
+	simpleexpr -> . NUM
+	simpleexpr -> . ID
+	whilestmt -> while ( . boolexpr ) stmt
+	multexpr -> . simpleexpr multexprprime
+I52:
+	goto: {")"=53}
+	whilestmt -> while ( boolexpr . ) stmt
+I53:
+	goto: {"whilestmt"=6, "assgstmt"=9, "stmt"=54, "ifstmt"=4, "compoundstmt"=5, "{"=2, "ID"=10, "if"=11, "while"=8}
+	stmt -> . ifstmt
+	assgstmt -> . ID = arithexpr ;
+	whilestmt -> . while ( boolexpr ) stmt
+	ifstmt -> . if ( boolexpr ) then stmt else stmt
+	whilestmt -> while ( boolexpr ) . stmt
+	compoundstmt -> . { stmts }
+	stmt -> . compoundstmt
+	stmt -> . assgstmt
+	stmt -> . whilestmt
+I54:
+	goto: {}
+	whilestmt -> while ( boolexpr ) stmt .
+I55:
+	goto: {}
+	stmts -> stmt stmts .
+I56:
+	goto: {}
+	compoundstmt -> { stmts } .
