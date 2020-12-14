@@ -30,11 +30,11 @@ public class SLRTableParser {
         Processor processor = new Processor(startSymbol, terminals, nonTerminals, rules);
         processor.computeAllFirstSet();
         processor.computeAllFollowSet();
-
-        for(NonTerminal nonTerminal : nonTerminals.keySet()) {
-            System.out.println(nonTerminal);
-            System.out.println(nonTerminal.getFollowSet());
-        }
+//
+//        for(NonTerminal nonTerminal : nonTerminals.keySet()) {
+//            System.out.println(nonTerminal);
+//            System.out.println(nonTerminal.getFollowSet());
+//        }
 
         Closure I0 = new Closure(new HashSet<>(Arrays.asList(new Item(0, 0, rules.get(0)))), rules);
         collection = new CanonicalCollection(I0, terminals, nonTerminals);
@@ -81,8 +81,8 @@ public class SLRTableParser {
             }
         }
 
-        System.out.println(actionTable);
-        System.out.println(gotoTable);
+//        System.out.println(actionTable);
+//        System.out.println(gotoTable);
 
         return new SLRParsingTable(actionTable, gotoTable);
     }

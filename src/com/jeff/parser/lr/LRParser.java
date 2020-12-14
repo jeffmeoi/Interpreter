@@ -134,8 +134,7 @@ public class LRParser {
         symbolList.add(output.peek().getLeft());
 
 
-
-        System.out.print(output.peek().getLeft().getValue());
+        StringBuffer sb = new StringBuffer(output.peek().getLeft().getValue());
 
         for(ProductionRule rule : output) {
             for(int i = symbolList.size() - 1; i >= 0; i--) {
@@ -146,11 +145,11 @@ public class LRParser {
                     break;
                 }
             }
-            StringBuffer sb = new StringBuffer(" => ");
+            sb.append("\n => ");
             for(Symbol symbol : symbolList)
                 sb.append(symbol.getValue()).append(" ");
-            System.out.print(sb.toString());
         }
+        System.out.print(sb.toString());
 
     }
 
