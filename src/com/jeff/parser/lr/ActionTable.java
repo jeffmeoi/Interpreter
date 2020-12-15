@@ -1,20 +1,57 @@
 package com.jeff.parser.lr;
 
+import com.jeff.parser.NonTerminal;
 import com.jeff.parser.Symbol;
+import com.jeff.parser.Terminal;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ActionTable {
 
-    private Map<Integer, Map<Symbol, List<Action>>> actionTable = new HashMap<>();
+    private final Map<Integer, Map<Symbol, List<Action>>> table = new HashMap<>();
+    private final CanonicalCollection collection;
+
+    public ActionTable(CanonicalCollection collection, Symbol startSymbol) {
+        this.collection = collection;
+
+        constructShiftPart();
+        constructReducePart(startSymbol);
+    }
+
+    public void constructShiftPart(){
+        for(int i = 0; i < collection.size(); i++) {
+            Closure closure = collection.get(i);
+            for(Map.Entry<Symbol, Integer> entry : closure.getGotoEntries()) {
+                Symbol nextSymbol = entry.getKey();
+                Integer nextState = entry.getValue();
+                if (entry.getKey() instanceof Terminal)
+                    put(i, nextSymbol, new Action(ActionType.SHIFT, nextState));
+            }
+        }
+    }
+
+    public void constructReducePart(Symbol startSymbol){
+        for(int i = 0; i < collection.size(); i++) {
+            Closure closure = collection.get(i);
+            for(Item item : closure.getItems()) {
+                Symbol left = item.getRule().getLeft();
+                if(!item.hasNextSymbol())
+                    if(item.getRule().getLeft().equals(startSymbol))
+                        put(i, Terminal.END, new Action(ActionType.ACCEPT, 0));
+                    else
+                        for(Symbol follow : left.getFollowSet())
+                            put(i, follow, new Action(ActionType.REDUCE, item.getIndex()));
+            }
+        }
+    }
+
 
     public void put(Integer state, Symbol symbol, Action action){
-        Map<Symbol, List<Action>> line = actionTable.get(state);
+        Map<Symbol, List<Action>> line = table.get(state);
         if(line == null) {
             line = new HashMap<>();
-            actionTable.put(state, line);
+            table.put(state, line);
         }
 
         List<Action> actionList = line.get(symbol);
@@ -26,13 +63,14 @@ public class ActionTable {
     }
 
     public List<Action> get(Integer state, Symbol symbol) {
-        return actionTable.getOrDefault(state, new HashMap<>()).get(symbol);
+        return table.getOrDefault(state, new HashMap<>()).get(symbol);
     }
 
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        for(Map.Entry<Integer, Map<Symbol, List<Action>>> entry : actionTable.entrySet()) {
+        List<Map.Entry<Integer, Map<Symbol, List<Action>>>> entryList = table.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getKey)).collect(Collectors.toList());
+        for(Map.Entry<Integer, Map<Symbol, List<Action>>> entry : entryList) {
             Map<Symbol, List<Action>> line = entry.getValue();
             sb.append(entry.getKey() + "\t");
             for(Map.Entry<Symbol, List<Action>> actionEntry : line.entrySet()) {

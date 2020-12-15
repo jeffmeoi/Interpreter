@@ -19,56 +19,55 @@ public final class Closure {
     public Closure(Set<Item> initialItems, List<ProductionRule> rules) {
         this.items = new HashSet<>(initialItems);
         this.rules = rules;
+        buildEntireClosure();
+    }
+
+    private void buildEntireClosure(){
         while(true) {
-            Set<Item> append = new HashSet<>();
-            for(Item item : items) {
-                int pos = item.getPosition();
-                ProductionRule rule = rules.get(item.getIndex());
-                if(pos >= rule.getRight().size())
-                    continue;
-                Symbol symbol = rule.getRight().get(pos);
-                if(symbol instanceof NonTerminal) {
-                    for(int i = 0; i < rules.size(); i++) {
-                        ProductionRule ele = rules.get(i);
-                        if(ele.getLeft().equals(symbol)) {
-                            append.add(new Item(i, 0, ele));
-                        }
-                    }
-                }
-            }
             int originCnt = items.size();
-            items.addAll(append);
+            items.addAll(buildMoreItems());
             if(items.size() - originCnt == 0)
                 break;
         }
     }
 
-    public Closure gotoNext(Symbol symbol) {
+    private Set<Item> buildMoreItems(){
+        Set<Item> moreItems = new HashSet<>();
+        for(Item item : items) {
+            if(!item.hasNextSymbol())   continue;
+            Symbol symbol = item.getNextSymbol();
+            if(symbol instanceof NonTerminal) {
+                for(int i = 0; i < rules.size(); i++) {
+                    ProductionRule rule = rules.get(i);
+                    if(rule.isDerivationBy(symbol))
+                        moreItems.add(new Item(i, 0, rule));
+                }
+            }
+        }
+        return moreItems;
+    }
+
+    public Optional<Closure> gotoNext(Symbol symbol) {
         Set<Item> gotoItems = new HashSet<>();
         for(Item item : items) {
-            int pos = item.getPosition();
-            ProductionRule rule = rules.get(item.getIndex());
-            if(pos >= rule.getRight().size())
-                continue;
-            Symbol s = rule.getRight().get(pos);
+            if(!item.hasNextSymbol())   continue;
+            Symbol s = item.getNextSymbol();
             if(s.equals(symbol)) {
-                if(s.equals(Symbol.EMPTY))
-                    gotoItems.add(new Item(item.getIndex(), 0, rule));
-                else
-                    gotoItems.add(new Item(item.getIndex(), item.getPosition() + 1, rule));
+                Optional<Item> nextItemOpt = item.getNextItem();
+                nextItemOpt.ifPresent(next -> gotoItems.add(next));
             }
         }
         if(gotoItems.size() == 0)
-            return null;
-        return new Closure(gotoItems, rules);
+            return Optional.empty();
+        return Optional.of(new Closure(gotoItems, rules));
     }
 
     public Set<Item> getItems() {
         return items;
     }
 
-    public HashMap<Symbol, Integer> getGotoTable() {
-        return gotoTable;
+    public Set<Map.Entry<Symbol, Integer>> getGotoEntries() {
+        return gotoTable.entrySet();
     }
 
     @Override

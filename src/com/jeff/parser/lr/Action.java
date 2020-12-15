@@ -4,13 +4,21 @@ public class Action {
     private ActionType type;
     private int num;
 
+    public boolean isShift(){
+        return ActionType.SHIFT.equals(type);
+    }
+
+    public boolean isReduce(){
+        return ActionType.REDUCE.equals(type);
+    }
+
+    public boolean isAccept(){
+        return ActionType.ACCEPT.equals(type);
+    }
+
     public Action(ActionType type, int num) {
         this.type = type;
         this.num = num;
-    }
-
-    public ActionType getType() {
-        return type;
     }
 
     public int getNum() {

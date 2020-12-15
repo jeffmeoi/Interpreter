@@ -25,6 +25,8 @@ public class Processor {
 
     private Set<Symbol> computeFirstSet(List<Symbol> symbols){
         Set<Symbol> firstSet = new HashSet<>();
+        if(symbols.isEmpty())
+            return firstSet;
         firstSet.addAll(symbols.get(0).getFirstSet());
         for (int i = 1; i < symbols.size(); i++) {
             if(symbols.get(i-1).getFirstSet().contains(Symbol.EMPTY)) {
@@ -48,7 +50,7 @@ public class Processor {
         List<Symbol> emptyList = Collections.singletonList(Symbol.EMPTY);
         for(ProductionRule rule : rules) {
             NonTerminal left = rule.getLeft();
-            if(rule.getRight().equals(emptyList)) {
+            if(rule.isDeriveEmpty()) {
                 left.getFirstSet().add(Symbol.EMPTY);
             }
         }

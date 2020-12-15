@@ -10,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         // 读入文件的所有行
-        String context = FileUtils.readAll("test1.toy");
+        String context = FileUtils.read("test1.toy");
         // 初始化tokenizer
         Tokenizer tokenizer = new Tokenizer(context);
         // 读入所有token
@@ -28,6 +28,6 @@ public class Main {
             sb.append(token).append(System.lineSeparator());
         }
         // 写回文件
-        FileUtils.writeAll("test1.tok", sb.toString());
+        FileUtils.write("test1.tok", sb.toString());
     }
 }

@@ -11,7 +11,7 @@ public class FileUtils {
      * @return 文件的所有内容
      * @throws IOException 文件io异常
      */
-    public static String readAll(String filepath) throws IOException {
+    public static String read(String filepath) throws IOException {
         InputStream is = new FileInputStream(filepath);
         byte[] bytes = new byte[is.available()];
         is.read(bytes);
@@ -26,7 +26,7 @@ public class FileUtils {
      * @param string 待输出的字符串
      * @throws IOException 文件io异常
      */
-    public static void writeAll(String filepath, String string) throws IOException {
+    public static void write(String filepath, String string) throws IOException {
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filepath));
         bufferedWriter.write(string);
         bufferedWriter.close();

@@ -3,7 +3,9 @@ package com.jeff.parser.lr;
 import com.jeff.parser.ProductionRule;
 import com.jeff.parser.Symbol;
 
+import javax.swing.text.html.Option;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Item {
     private final ProductionRule rule;
@@ -14,6 +16,20 @@ public class Item {
         this.index = index;
         this.position = position;
         this.rule = rule;
+    }
+
+    public boolean hasNextSymbol() {
+        return position < rule.getRight().size();
+    }
+
+    public Symbol getNextSymbol() {
+        return rule.getRight().get(position);
+    }
+
+    public Optional<Item> getNextItem() {
+        if(hasNextSymbol())
+            return Optional.of(new Item(index, position + 1, rule));
+        return Optional.empty();
     }
 
     public ProductionRule getRule() {
@@ -48,8 +64,7 @@ public class Item {
         for(int i = 0; i < rule.getRight().size(); i++) {
             if(i == position)
                 right.append(". ");
-            if(!rule.getRight().get(i).equals(Symbol.EMPTY))
-                right.append(rule.getRight().get(i).getValue()).append(" ");
+            right.append(rule.getRight().get(i).getValue()).append(" ");
         }
         if(position >= rule.getRight().size())
             right.append(". ");

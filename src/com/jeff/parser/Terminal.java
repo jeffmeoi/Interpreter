@@ -12,6 +12,10 @@ public class Terminal extends Symbol{
         super(value);
     }
 
+    public Terminal(Symbol symbol) {
+        super(symbol.getValue());
+    }
+
 
     @Override
     public String toString() {

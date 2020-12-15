@@ -9,15 +9,12 @@ public class Symbol {
 
     public static final Symbol EMPTY = new Symbol("\u03B5");    // epsilon的utf8编码
 
-
-
     private final Set<Symbol> firstSet = new HashSet<>();
     private final Set<Symbol> followSet = new HashSet<>();
 
     public Set<Symbol> getFirstSet() {
         return firstSet;
     }
-
 
     public Set<Symbol> getFollowSet() {
         return followSet;
