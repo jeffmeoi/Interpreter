@@ -23,7 +23,7 @@ public class SLRTableMaker {
     private HashMap<Symbol, Set<Symbol>> followSets;
     private CanonicalCollection collection;
 
-    public SLRTableMaker(Symbol startSymbol, Map<Terminal, Terminal> terminals, Map<NonTerminal, NonTerminal> nonTerminals, List<ProductionRule> rules) throws IOException {
+    public SLRTableMaker(Symbol startSymbol, Map<Terminal, Terminal> terminals, Map<NonTerminal, NonTerminal> nonTerminals, List<ProductionRule> rules) {
         this.startSymbol = startSymbol;
         this.terminals = terminals;
         this.nonTerminals = nonTerminals;
@@ -31,38 +31,13 @@ public class SLRTableMaker {
 
     }
     public SLRTableMaker(String startSymbolFilepath, String terminalFilepath, String nonTerminalFilepath, String ruleFilepath) throws IOException {
-        this.terminals = readTerminalsFromFile(terminalFilepath);
-        this.nonTerminals = readNonTerminalsFromFile(nonTerminalFilepath);
-        this.startSymbol = readStartSymbolFromFile(startSymbolFilepath);
-        this.rules = readProductionRulesFromFile(ruleFilepath);
+        this.terminals = FileUtils.readTerminalsFromFile(terminalFilepath);
+        this.nonTerminals = FileUtils.readNonTerminalsFromFile(nonTerminalFilepath);
+        this.startSymbol = FileUtils.readStartSymbolFromFile(startSymbolFilepath, nonTerminals);
+        this.rules = FileUtils.readProductionRulesFromFile(ruleFilepath, terminals, nonTerminals);
     }
 
 
-    private NonTerminal readStartSymbolFromFile(String filepath) throws IOException {
-        String symbol = FileUtils.read(filepath);
-        Symbol startSymbol = new NonTerminal(symbol);
-        return nonTerminals.get(startSymbol);
-    }
-
-    private Map<Terminal, Terminal> readTerminalsFromFile(String filepath) throws IOException {
-        Map<Terminal, Terminal> terminals = StringUtils.separateBySpace(FileUtils.read(filepath))
-                .stream().map(s -> new Terminal(s))
-                .collect(Collectors.toMap(Function.identity(), Function.identity()));
-        Terminal end = new Terminal(Terminal.END);
-        terminals.put(end, end);
-        return terminals;
-    }
-
-    private Map<NonTerminal, NonTerminal> readNonTerminalsFromFile(String filepath) throws IOException {
-        Map<NonTerminal, NonTerminal> nonTerminals = StringUtils.separateBySpace(FileUtils.read(filepath))
-                .stream().map(s -> new NonTerminal(s))
-                .collect(Collectors.toMap(Function.identity(), Function.identity()));
-        return nonTerminals;
-    }
-
-    private List<ProductionRule> readProductionRulesFromFile(String filepath) throws IOException {
-        return ProductionRule.getProductionRulesByStringList(StringUtils.separateByLine(FileUtils.read(filepath)), terminals, nonTerminals);
-    }
 
 
     public SLRParsingTable make() {
@@ -70,7 +45,16 @@ public class SLRTableMaker {
         Processor processor = new Processor(startSymbol, terminals, nonTerminals, rules);
         firstSets = processor.computeAllFirstSet();
         followSets = processor.computeAllFollowSet();
-
+        System.out.println("first set");
+        for(Map.Entry<Symbol, Set<Symbol>> entry : firstSets.entrySet()) {
+            System.out.println(entry.getKey());
+            System.out.println(entry.getValue());
+        }
+        System.out.println("follow set");
+        for(Map.Entry<Symbol, Set<Symbol>> entry : followSets.entrySet()) {
+            System.out.println(entry.getKey());
+            System.out.println(entry.getValue());
+        }
         Item startRule = new Item(0, 0, rules.get(0));
         Set<Item> initialSet = new HashSet<>(Arrays.asList(startRule));
         Closure I0 = new Closure(initialSet, rules);

@@ -1,7 +1,16 @@
 package com.jeff;
 
+import com.jeff.parser.NonTerminal;
+import com.jeff.parser.ProductionRule;
+import com.jeff.parser.Symbol;
+import com.jeff.parser.Terminal;
+
 import java.io.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class FileUtils {
 
@@ -32,4 +41,30 @@ public class FileUtils {
         bufferedWriter.close();
     }
 
+    public static NonTerminal readStartSymbolFromFile(String filepath, Map<NonTerminal, NonTerminal> nonTerminals) throws IOException {
+        String symbol = FileUtils.read(filepath);
+        Symbol startSymbol = new NonTerminal(symbol);
+        return nonTerminals.get(startSymbol);
+    }
+
+    public static Map<Terminal, Terminal> readTerminalsFromFile(String filepath) throws IOException {
+        Map<Terminal, Terminal> terminals = StringUtils.separateBySpace(FileUtils.read(filepath))
+                .stream().map(s -> new Terminal(s))
+                .collect(Collectors.toMap(Function.identity(), Function.identity()));
+        Terminal end = new Terminal(Terminal.END);
+        terminals.put(end, end);
+        return terminals;
+    }
+
+    public static Map<NonTerminal, NonTerminal> readNonTerminalsFromFile(String filepath) throws IOException {
+        Map<NonTerminal, NonTerminal> nonTerminals = StringUtils.separateBySpace(FileUtils.read(filepath))
+                .stream().map(s -> new NonTerminal(s))
+                .collect(Collectors.toMap(Function.identity(), Function.identity()));
+        return nonTerminals;
+    }
+
+    public static List<ProductionRule> readProductionRulesFromFile(String filepath, Map<Terminal, Terminal> terminals,
+                                                                   Map<NonTerminal, NonTerminal> nonTerminals) throws IOException {
+        return ProductionRule.getProductionRulesByStringList(StringUtils.separateByLine(FileUtils.read(filepath)), terminals, nonTerminals);
+    }
 }
