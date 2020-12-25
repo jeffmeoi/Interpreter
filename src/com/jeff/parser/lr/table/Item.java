@@ -18,7 +18,7 @@ public class Item {
     }
 
     public boolean hasNextSymbol() {
-        return position < rule.getRight().size();
+        return position < rule.getRight().size() && !rule.isDeriveEmpty();
     }
 
     public Symbol getNextSymbol() {

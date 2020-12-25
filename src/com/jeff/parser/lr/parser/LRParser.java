@@ -1,7 +1,5 @@
 package com.jeff.parser.lr.parser;
 
-import com.jeff.FileUtils;
-import com.jeff.StringUtils;
 import com.jeff.parser.*;
 import com.jeff.parser.lr.table.Action;
 import com.jeff.parser.lr.table.SLRParsingTable;
@@ -9,7 +7,6 @@ import com.jeff.parser.lr.table.SLRTableMaker;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class LRParser {
@@ -50,7 +47,7 @@ public class LRParser {
             } else if(action.isReduce()) {
                 ProductionRule rule = rules.get(action.getNum());
                 for (int i = 0; i < rule.getRight().size(); i++) {
-                    if(!symbolStack.peek().equals(Symbol.EMPTY)) {
+                    if(!rule.getRight().get(i).equals(Symbol.EMPTY)) {
                         symbolStack.pop();
                         stateStack.pop();
                     }

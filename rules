@@ -1,17 +1,15 @@
-program         decls compoundstmt
-decls           decl ; decls
-decls           ~
-decl            int ID = INTNUM
-decl            real ID = REALNUM
+program         compoundstmt
 stmt            ifstmt
+stmt            whilestmt
 stmt            assgstmt
 stmt            compoundstmt
 compoundstmt    { stmts }
 stmts           stmt stmts
 stmts           ~
 ifstmt          if ( boolexpr ) then stmt else stmt
+whilestmt       while ( boolexpr ) stmt
 assgstmt        ID = arithexpr ;
-boolexpr        arithexpr boolop arithexpr
+boolexpr         arithexpr boolop arithexpr
 boolop          <
 boolop          >
 boolop          <=
@@ -26,6 +24,5 @@ multexprprime   * simpleexpr multexprprime
 multexprprime   / simpleexpr multexprprime
 multexprprime   ~
 simpleexpr      ID
-simpleexpr      INTNUM
-simpleexpr      REALNUM
+simpleexpr      NUM
 simpleexpr      ( arithexpr )

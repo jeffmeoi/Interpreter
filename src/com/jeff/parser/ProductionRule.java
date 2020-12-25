@@ -19,7 +19,7 @@ public class ProductionRule {
     }
 
     public boolean isDeriveEmpty() {
-        return right.size() == 0;
+        return right.size() == 0 || right.size() == 1 && right.contains(Symbol.EMPTY);
     }
 
     public ProductionRule(NonTerminal left, List<Symbol> right) {

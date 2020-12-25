@@ -1,1 +1,1 @@
-{ } if ( ) then else while ID = ; < > <= >= == + - * / INTNUM REALNUM int real
+{ } if ( ) then else while ID = ; < > <= >= == + - * / NUM

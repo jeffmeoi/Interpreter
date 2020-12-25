@@ -47,8 +47,8 @@ public class Processor {
         }
         // step 2
         for(ProductionRule rule : rules) {
-            NonTerminal left = rule.getLeft();
             if(rule.isDeriveEmpty()) {
+                NonTerminal left = rule.getLeft();
                 Set<Symbol> firstSet = firstSets.getOrDefault(left, new HashSet<>());
                 firstSets.put(left, firstSet);
                 firstSet.add(Symbol.EMPTY);
@@ -69,7 +69,7 @@ public class Processor {
             if(modifyCnt == 0)
                 break;
         }
-//        System.out.println(firstSets);
+        // System.out.println(firstSets);
         return firstSets;
     }
 
@@ -102,7 +102,7 @@ public class Processor {
                 List<Symbol> right = rule.getRight();
                 Set<Symbol> leftFollowSet = followSets.getOrDefault(left, new HashSet<>());
                 followSets.put(left, leftFollowSet);
-                if (right.size() == 0)
+                if (rule.isDeriveEmpty())
                     continue;
                 Symbol last = right.get(right.size() - 1);
                 if(last instanceof NonTerminal) {
