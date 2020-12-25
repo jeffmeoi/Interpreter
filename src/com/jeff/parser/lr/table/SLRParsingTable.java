@@ -1,7 +1,8 @@
-package com.jeff.parser.lr;
+package com.jeff.parser.lr.table;
 
 import com.jeff.parser.NonTerminal;
 import com.jeff.parser.Terminal;
+import com.jeff.parser.lr.parser.SLRParsingException;
 
 import java.util.List;
 
@@ -30,9 +31,9 @@ public class SLRParsingTable {
 
     @Override
     public String toString() {
-        return "SLRParsingTable{" +
-                "actionTable=" + actionTable +
-                ", gotoTable=" + gotoTable +
-                '}';
+
+        return "actionTable:\n" + actionTable +
+                "gotoTable:\n" + gotoTable +
+                '\n';
     }
 }

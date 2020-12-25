@@ -1,6 +1,5 @@
-package com.jeff.parser.lr;
+package com.jeff.parser.lr.table;
 
-import com.jeff.parser.NonTerminal;
 import com.jeff.parser.Symbol;
 import com.jeff.parser.Terminal;
 
@@ -10,10 +9,12 @@ import java.util.stream.Collectors;
 public class ActionTable {
 
     private final Map<Integer, Map<Symbol, List<Action>>> table = new HashMap<>();
+    private final Map<Symbol, Set<Symbol>> followSets;
     private final CanonicalCollection collection;
 
-    public ActionTable(CanonicalCollection collection, Symbol startSymbol) {
+    public ActionTable(CanonicalCollection collection, Symbol startSymbol, Map<Symbol, Set<Symbol>> followSets) {
         this.collection = collection;
+        this.followSets = followSets;
 
         constructShiftPart();
         constructReducePart(startSymbol);
@@ -40,7 +41,7 @@ public class ActionTable {
                     if(item.getRule().getLeft().equals(startSymbol))
                         put(i, Terminal.END, new Action(ActionType.ACCEPT, 0));
                     else
-                        for(Symbol follow : left.getFollowSet())
+                        for(Symbol follow : followSets.getOrDefault(left, new HashSet<>()))
                             put(i, follow, new Action(ActionType.REDUCE, item.getIndex()));
             }
         }

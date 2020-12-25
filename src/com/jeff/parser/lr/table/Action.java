@@ -1,4 +1,4 @@
-package com.jeff.parser.lr;
+package com.jeff.parser.lr.table;
 
 public class Action {
     private ActionType type;

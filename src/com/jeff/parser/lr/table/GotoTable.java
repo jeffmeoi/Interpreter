@@ -1,4 +1,4 @@
-package com.jeff.parser.lr;
+package com.jeff.parser.lr.table;
 
 import com.jeff.parser.NonTerminal;
 import com.jeff.parser.Symbol;

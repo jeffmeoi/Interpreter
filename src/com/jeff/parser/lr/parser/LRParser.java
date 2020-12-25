@@ -1,8 +1,11 @@
-package com.jeff.parser.lr;
+package com.jeff.parser.lr.parser;
 
 import com.jeff.FileUtils;
 import com.jeff.StringUtils;
 import com.jeff.parser.*;
+import com.jeff.parser.lr.table.Action;
+import com.jeff.parser.lr.table.SLRParsingTable;
+import com.jeff.parser.lr.table.SLRTableMaker;
 
 import java.io.IOException;
 import java.util.*;
@@ -11,52 +14,15 @@ import java.util.stream.Collectors;
 
 public class LRParser {
 
-    private final Symbol startSymbol;
-    private final Map<Terminal, Terminal> terminals;
-    private final Map<NonTerminal, NonTerminal> nonTerminals;
-    private final List<ProductionRule> rules;
+    private final Symbol startSymbol = LRConstant.startSymbol;
+    private final Map<Terminal, Terminal> terminals = LRConstant.terminals;
+    private final Map<NonTerminal, NonTerminal> nonTerminals = LRConstant.nonTerminals;
+    private final List<ProductionRule> rules = LRConstant.rules;
     private final SLRParsingTable table;
 
-    public LRParser(String startSymbolFilepath, String terminalFilepath, String nonTerminalFilepath, String ruleFilepath) throws IOException {
-
-        this.terminals = readTerminalsFromFile(terminalFilepath);
-        this.nonTerminals = readNonTerminalsFromFile(nonTerminalFilepath);
-        this.startSymbol = readStartSymbolFromFile(startSymbolFilepath);
-        this.rules = readProductionRulesFromFile(ruleFilepath);
-
-        Processor processor = new Processor(startSymbol, terminals, nonTerminals, rules);
-        processor.computeAllFirstSet();
-        processor.computeAllFollowSet();
-
+    public LRParser() throws IOException {
         SLRTableMaker tableParser = new SLRTableMaker(startSymbol, terminals, nonTerminals, rules);
         this.table = tableParser.make();
-    }
-
-
-    private NonTerminal readStartSymbolFromFile(String filepath) throws IOException {
-        String symbol = FileUtils.read(filepath);
-        Symbol startSymbol = new NonTerminal(symbol);
-        return nonTerminals.get(startSymbol);
-    }
-
-    private Map<Terminal, Terminal> readTerminalsFromFile(String filepath) throws IOException {
-        Map<Terminal, Terminal> terminals = StringUtils.separateBySpace(FileUtils.read(filepath))
-                .stream().map(s -> new Terminal(s))
-                .collect(Collectors.toMap(Function.identity(), Function.identity()));
-        Terminal end = new Terminal(Terminal.END);
-        terminals.put(end, end);
-        return terminals;
-    }
-
-    private Map<NonTerminal, NonTerminal> readNonTerminalsFromFile(String filepath) throws IOException {
-        Map<NonTerminal, NonTerminal> nonTerminals = StringUtils.separateBySpace(FileUtils.read(filepath))
-                .stream().map(s -> new NonTerminal(s))
-                .collect(Collectors.toMap(Function.identity(), Function.identity()));
-        return nonTerminals;
-    }
-
-    private List<ProductionRule> readProductionRulesFromFile(String filepath) throws IOException {
-        return ProductionRule.getProductionRulesByStringList(StringUtils.separateByLine(FileUtils.read(filepath)), terminals, nonTerminals);
     }
 
     public LinkedList<ProductionRule> parse(List<Terminal> tokens) {
@@ -123,8 +89,8 @@ public class LRParser {
 
     public static void main(String[] args) throws IOException {
 
-        LRParser parser = new LRParser("start-symbol", "terminals", "non-terminals", "rules");
-        String context = "{ ID = NUM ; }";
+        LRParser parser = new LRParser();
+        String context = "{ ID = NUM ; }"; 
         List<Terminal> tokens = Arrays.asList(context.split("\\s+")).stream().map(s -> new Terminal(s)).collect(Collectors.toList());
         LinkedList<ProductionRule> ruleStack = parser.parse(tokens);
         System.out.println(parser.generateDerivationString(ruleStack));

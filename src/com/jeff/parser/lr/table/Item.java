@@ -1,9 +1,8 @@
-package com.jeff.parser.lr;
+package com.jeff.parser.lr.table;
 
 import com.jeff.parser.ProductionRule;
 import com.jeff.parser.Symbol;
 
-import javax.swing.text.html.Option;
 import java.util.Objects;
 import java.util.Optional;
 
