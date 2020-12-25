@@ -69,6 +69,7 @@ public class Processor {
             if(modifyCnt == 0)
                 break;
         }
+//        System.out.println(firstSets);
         return firstSets;
     }
 
@@ -124,6 +125,7 @@ public class Processor {
             if(modifyCnt == 0)
                 break;
         }
+//        System.out.println(followSets);
         return followSets;
     }
 

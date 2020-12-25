@@ -31,7 +31,6 @@ public class SLRTableMaker {
 
     }
     public SLRTableMaker(String startSymbolFilepath, String terminalFilepath, String nonTerminalFilepath, String ruleFilepath) throws IOException {
-
         this.terminals = readTerminalsFromFile(terminalFilepath);
         this.nonTerminals = readNonTerminalsFromFile(nonTerminalFilepath);
         this.startSymbol = readStartSymbolFromFile(startSymbolFilepath);
@@ -78,7 +77,6 @@ public class SLRTableMaker {
         collection = new CanonicalCollection(I0, terminals, nonTerminals);
         ActionTable actionTable = new ActionTable(collection, startSymbol, followSets);
         GotoTable gotoTable = new GotoTable(collection);
-
 
         return new SLRParsingTable(actionTable, gotoTable);
     }

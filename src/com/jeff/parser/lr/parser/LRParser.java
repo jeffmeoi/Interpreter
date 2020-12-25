@@ -23,6 +23,7 @@ public class LRParser {
     public LRParser() throws IOException {
         SLRTableMaker tableParser = new SLRTableMaker(startSymbol, terminals, nonTerminals, rules);
         this.table = tableParser.make();
+//        System.out.println(table);
     }
 
     public LinkedList<ProductionRule> parse(List<Terminal> tokens) {
@@ -49,8 +50,10 @@ public class LRParser {
             } else if(action.isReduce()) {
                 ProductionRule rule = rules.get(action.getNum());
                 for (int i = 0; i < rule.getRight().size(); i++) {
-                    symbolStack.pop();
-                    stateStack.pop();
+                    if(!symbolStack.peek().equals(Symbol.EMPTY)) {
+                        symbolStack.pop();
+                        stateStack.pop();
+                    }
                 }
                 symbolStack.push(rule.getLeft());
                 stateStack.push(table.get(stateStack.peek(), rule.getLeft()));

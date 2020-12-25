@@ -61,7 +61,7 @@ public class LRConstant {
     public static final ProductionRule P5 = new ProductionRule(STMT, Arrays.asList(COMPOUND_STMT));
     public static final ProductionRule P6 = new ProductionRule(COMPOUND_STMT, Arrays.asList(OPEN_BRACE, STMTS, CLOSE_BRACE));
     public static final ProductionRule P7 = new ProductionRule(STMTS, Arrays.asList(STMT, STMTS));
-    public static final ProductionRule P8 = new ProductionRule(STMTS, Arrays.asList(Symbol.EMPTY));
+    public static final ProductionRule P8 = new ProductionRule(STMTS, Arrays.asList());
     public static final ProductionRule P9 = new ProductionRule(IF_STMT, Arrays.asList(IF, OPEN_PARENTHESES, BOOL_EXPR, CLOSE_PARENTHESES, THEN, STMT, ELSE, STMT));
     public static final ProductionRule P10 = new ProductionRule(WHILE_STMT, Arrays.asList(WHILE, OPEN_PARENTHESES, BOOL_EXPR, CLOSE_PARENTHESES, STMT));
     public static final ProductionRule P11 = new ProductionRule(ASSG_STMT, Arrays.asList(ID, IS, ARITH_EXPR, SEMICOLON));
@@ -74,11 +74,11 @@ public class LRConstant {
     public static final ProductionRule P18 = new ProductionRule(ARITH_EXPR, Arrays.asList(MULT_EXPR, ARITH_EXPR_PRIME));
     public static final ProductionRule P19 = new ProductionRule(ARITH_EXPR_PRIME, Arrays.asList(PLUS, MULT_EXPR, ARITH_EXPR_PRIME));
     public static final ProductionRule P20 = new ProductionRule(ARITH_EXPR_PRIME, Arrays.asList(MINUS, MULT_EXPR, ARITH_EXPR_PRIME));
-    public static final ProductionRule P21 = new ProductionRule(ARITH_EXPR_PRIME, Arrays.asList(Symbol.EMPTY));
+    public static final ProductionRule P21 = new ProductionRule(ARITH_EXPR_PRIME, Arrays.asList());
     public static final ProductionRule P22 = new ProductionRule(MULT_EXPR, Arrays.asList(SIMPLE_EXPR, MULT_EXPR_PRIME));
     public static final ProductionRule P23 = new ProductionRule(MULT_EXPR_PRIME, Arrays.asList(MULTIPLY, SIMPLE_EXPR, MULT_EXPR_PRIME));
     public static final ProductionRule P24 = new ProductionRule(MULT_EXPR_PRIME, Arrays.asList(DIVIDE, SIMPLE_EXPR, MULT_EXPR_PRIME));
-    public static final ProductionRule P25 = new ProductionRule(MULT_EXPR_PRIME, Arrays.asList(Symbol.EMPTY));
+    public static final ProductionRule P25 = new ProductionRule(MULT_EXPR_PRIME, Arrays.asList());
     public static final ProductionRule P26 = new ProductionRule(SIMPLE_EXPR, Arrays.asList(ID));
     public static final ProductionRule P27 = new ProductionRule(SIMPLE_EXPR, Arrays.asList(NUM));
     public static final ProductionRule P28 = new ProductionRule(SIMPLE_EXPR, Arrays.asList(OPEN_PARENTHESES, ARITH_EXPR, CLOSE_PARENTHESES));
@@ -87,7 +87,6 @@ public class LRConstant {
     public static final Map<Terminal, Terminal> terminals = new HashMap<>();
     public static final Map<NonTerminal, NonTerminal> nonTerminals = new HashMap<>();
     public static final List<ProductionRule> rules = new ArrayList<>();
-    public static final SLRParsingTable table;
 
     static {
         terminals.put(OPEN_BRACE, OPEN_BRACE);
@@ -111,6 +110,7 @@ public class LRConstant {
         terminals.put(MULTIPLY, MULTIPLY);
         terminals.put(DIVIDE, DIVIDE);
         terminals.put(NUM, NUM);
+        terminals.put(Terminal.END, Terminal.END);
 
         nonTerminals.put(PROGRAM, PROGRAM);
         nonTerminals.put(STMT, STMT);
@@ -126,16 +126,10 @@ public class LRConstant {
         nonTerminals.put(MULT_EXPR, MULT_EXPR);
         nonTerminals.put(MULT_EXPR_PRIME, MULT_EXPR_PRIME);
         nonTerminals.put(SIMPLE_EXPR, SIMPLE_EXPR);
-        rules.addAll(Arrays.asList(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19,
-                P20, P21, P22, P23, P24, P25, P26, P27, P28));
 
-        SLRTableMaker tableMaker = null;
-        try {
-            tableMaker = new SLRTableMaker(startSymbol, terminals, nonTerminals, rules);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        table = tableMaker.make();
+        rules.addAll(Arrays.asList(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17,
+                P18, P19, P20, P21, P22, P23, P24, P25, P26, P27, P28));
+
 
     }
 }
