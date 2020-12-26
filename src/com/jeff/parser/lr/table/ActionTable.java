@@ -20,7 +20,7 @@ public class ActionTable {
         constructReducePart(startSymbol);
     }
 
-    public void constructShiftPart(){
+    private void constructShiftPart(){
         for(int i = 0; i < collection.size(); i++) {
             Closure closure = collection.get(i);
             for(Map.Entry<Symbol, Integer> entry : closure.getGotoEntries()) {
@@ -32,7 +32,7 @@ public class ActionTable {
         }
     }
 
-    public void constructReducePart(Symbol startSymbol){
+    private void constructReducePart(Symbol startSymbol){
         for(int i = 0; i < collection.size(); i++) {
             Closure closure = collection.get(i);
             for(Item item : closure.getItems()) {
@@ -47,19 +47,19 @@ public class ActionTable {
         }
     }
 
+    private void checkConflicts(){
+        for(Map.Entry<Integer, Map<Symbol, List<Action>>> mapEntry : table.entrySet()) {
+            for(Map.Entry<Symbol, List<Action>> entry : mapEntry.getValue().entrySet()) {
+                if(entry.getValue() != null && entry.getValue().size() >= 2)
+                    throw new SLRActionTableConflictException(mapEntry.getKey(), entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
 
     public void put(Integer state, Symbol symbol, Action action){
-        Map<Symbol, List<Action>> line = table.get(state);
-        if(line == null) {
-            line = new HashMap<>();
-            table.put(state, line);
-        }
-
-        List<Action> actionList = line.get(symbol);
-        if(actionList == null) {
-            actionList = new ArrayList<>();
-            line.put(symbol, actionList);
-        }
+        Map<Symbol, List<Action>> line = table.computeIfAbsent(state, k -> new HashMap<>());
+        List<Action> actionList = line.computeIfAbsent(symbol, k -> new ArrayList<>());
         actionList.add(action);
     }
 
@@ -69,13 +69,13 @@ public class ActionTable {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         List<Map.Entry<Integer, Map<Symbol, List<Action>>>> entryList = table.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getKey)).collect(Collectors.toList());
         for(Map.Entry<Integer, Map<Symbol, List<Action>>> entry : entryList) {
             Map<Symbol, List<Action>> line = entry.getValue();
-            sb.append(entry.getKey() + "\t");
+            sb.append(entry.getKey()).append("\t");
             for(Map.Entry<Symbol, List<Action>> actionEntry : line.entrySet()) {
-                sb.append(actionEntry.getKey().getValue() + ":" + actionEntry.getValue() + "\t");
+                sb.append(actionEntry.getKey()).append(":").append(actionEntry.getValue()).append("\t");
             }
             sb.append(System.lineSeparator());
         }

@@ -14,11 +14,13 @@ public class Main {
                 "   c = c / 4 ; \n" +
                 "} \n";
         Interpreter interpreter = new Interpreter();
+        // 开始解释
         try {
             interpreter.interpret(context);
-        } catch (NotMatchedException e) {
-            System.out.println("Not Match");
+        } catch (NotMatchedException | VariableNotExistException | TypeCheckException e) {
+            System.out.println(e);
         }
+        // 如果解释成功，则打印全局符号表
         if(interpreter.isSuccess())
             interpreter.print();
     }

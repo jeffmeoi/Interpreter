@@ -38,7 +38,7 @@ public class Processor {
         return firstSet;
     }
 
-    public HashMap<Symbol, Set<Symbol>> computeAllFirstSet(){
+    public HashMap<Symbol, Set<Symbol>> generateAllFirstSet(){
         // step 1
         for(Terminal terminal : terminals.keySet()){
             Set<Symbol> firstSet = firstSets.getOrDefault(terminal, new HashSet<>());
@@ -73,7 +73,7 @@ public class Processor {
         return firstSets;
     }
 
-    public HashMap<Symbol, Set<Symbol>> computeAllFollowSet(){
+    public HashMap<Symbol, Set<Symbol>> generateAllFollowSet(){
         // step 1
         Set<Symbol> followSet = firstSets.getOrDefault(startSymbol, new HashSet<>());
         followSets.put(startSymbol, followSet);

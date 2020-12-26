@@ -55,12 +55,17 @@ public class Lex implements Iterator<Token> {
         return TokenType.ERROR;
     }
 
-    public String match(String token){
-        Token semi = current();
-        if(!semi.match(token))
-            throw new NotMatchedException();
+    /**
+     * 匹配token，并且将移到下一个token
+     * @param tokenStr 需要匹配的token类型()
+     * @return lexeme
+     */
+    public String match(String tokenStr){
+        Token token = current();
+        if(!token.match(tokenStr))
+            throw new NotMatchedException(token, tokenStr);
         next();
-        return semi.getLexeme();
+        return token.getLexeme();
     }
 
     /**

@@ -4,10 +4,7 @@ import com.jeff.parser.NonTerminal;
 import com.jeff.parser.ProductionRule;
 import com.jeff.parser.Symbol;
 import com.jeff.parser.Terminal;
-import com.jeff.parser.lr.table.SLRParsingTable;
-import com.jeff.parser.lr.table.SLRTableMaker;
 
-import java.io.IOException;
 import java.util.*;
 
 public class LRConstant {
@@ -54,33 +51,33 @@ public class LRConstant {
 
 
     // 定义所有的产生式
-    public static final ProductionRule P1 = new ProductionRule(PROGRAM, Arrays.asList(COMPOUND_STMT));
-    public static final ProductionRule P2 = new ProductionRule(STMT, Arrays.asList(IF_STMT));
-    public static final ProductionRule P3 = new ProductionRule(STMT, Arrays.asList(WHILE_STMT));
-    public static final ProductionRule P4 = new ProductionRule(STMT, Arrays.asList(ASSG_STMT));
-    public static final ProductionRule P5 = new ProductionRule(STMT, Arrays.asList(COMPOUND_STMT));
+    public static final ProductionRule P1 = new ProductionRule(PROGRAM, Collections.singletonList(COMPOUND_STMT));
+    public static final ProductionRule P2 = new ProductionRule(STMT, Collections.singletonList(IF_STMT));
+    public static final ProductionRule P3 = new ProductionRule(STMT, Collections.singletonList(WHILE_STMT));
+    public static final ProductionRule P4 = new ProductionRule(STMT, Collections.singletonList(ASSG_STMT));
+    public static final ProductionRule P5 = new ProductionRule(STMT, Collections.singletonList(COMPOUND_STMT));
     public static final ProductionRule P6 = new ProductionRule(COMPOUND_STMT, Arrays.asList(OPEN_BRACE, STMTS, CLOSE_BRACE));
     public static final ProductionRule P7 = new ProductionRule(STMTS, Arrays.asList(STMT, STMTS));
-    public static final ProductionRule P8 = new ProductionRule(STMTS, Arrays.asList(Symbol.EMPTY));
+    public static final ProductionRule P8 = new ProductionRule(STMTS, Collections.singletonList(Symbol.EMPTY));
     public static final ProductionRule P9 = new ProductionRule(IF_STMT, Arrays.asList(IF, OPEN_PARENTHESES, BOOL_EXPR, CLOSE_PARENTHESES, THEN, STMT, ELSE, STMT));
     public static final ProductionRule P10 = new ProductionRule(WHILE_STMT, Arrays.asList(WHILE, OPEN_PARENTHESES, BOOL_EXPR, CLOSE_PARENTHESES, STMT));
     public static final ProductionRule P11 = new ProductionRule(ASSG_STMT, Arrays.asList(ID, IS, ARITH_EXPR, SEMICOLON));
     public static final ProductionRule P12 = new ProductionRule(BOOL_EXPR, Arrays.asList(ARITH_EXPR, BOOL_OP, ARITH_EXPR));
-    public static final ProductionRule P13 = new ProductionRule(BOOL_OP, Arrays.asList(LESS_THAN));
-    public static final ProductionRule P14 = new ProductionRule(BOOL_OP, Arrays.asList(GREATER_THAN));
-    public static final ProductionRule P15 = new ProductionRule(BOOL_OP, Arrays.asList(LESS_THAN_OR_EQUAL));
-    public static final ProductionRule P16 = new ProductionRule(BOOL_OP, Arrays.asList(GREATER_THAN_OR_EQUAL));
-    public static final ProductionRule P17 = new ProductionRule(BOOL_OP, Arrays.asList(EQUAL));
+    public static final ProductionRule P13 = new ProductionRule(BOOL_OP, Collections.singletonList(LESS_THAN));
+    public static final ProductionRule P14 = new ProductionRule(BOOL_OP, Collections.singletonList(GREATER_THAN));
+    public static final ProductionRule P15 = new ProductionRule(BOOL_OP, Collections.singletonList(LESS_THAN_OR_EQUAL));
+    public static final ProductionRule P16 = new ProductionRule(BOOL_OP, Collections.singletonList(GREATER_THAN_OR_EQUAL));
+    public static final ProductionRule P17 = new ProductionRule(BOOL_OP, Collections.singletonList(EQUAL));
     public static final ProductionRule P18 = new ProductionRule(ARITH_EXPR, Arrays.asList(MULT_EXPR, ARITH_EXPR_PRIME));
     public static final ProductionRule P19 = new ProductionRule(ARITH_EXPR_PRIME, Arrays.asList(PLUS, MULT_EXPR, ARITH_EXPR_PRIME));
     public static final ProductionRule P20 = new ProductionRule(ARITH_EXPR_PRIME, Arrays.asList(MINUS, MULT_EXPR, ARITH_EXPR_PRIME));
-    public static final ProductionRule P21 = new ProductionRule(ARITH_EXPR_PRIME, Arrays.asList(Symbol.EMPTY));
+    public static final ProductionRule P21 = new ProductionRule(ARITH_EXPR_PRIME, Collections.singletonList(Symbol.EMPTY));
     public static final ProductionRule P22 = new ProductionRule(MULT_EXPR, Arrays.asList(SIMPLE_EXPR, MULT_EXPR_PRIME));
     public static final ProductionRule P23 = new ProductionRule(MULT_EXPR_PRIME, Arrays.asList(MULTIPLY, SIMPLE_EXPR, MULT_EXPR_PRIME));
     public static final ProductionRule P24 = new ProductionRule(MULT_EXPR_PRIME, Arrays.asList(DIVIDE, SIMPLE_EXPR, MULT_EXPR_PRIME));
-    public static final ProductionRule P25 = new ProductionRule(MULT_EXPR_PRIME, Arrays.asList(Symbol.EMPTY));
-    public static final ProductionRule P26 = new ProductionRule(SIMPLE_EXPR, Arrays.asList(ID));
-    public static final ProductionRule P27 = new ProductionRule(SIMPLE_EXPR, Arrays.asList(NUM));
+    public static final ProductionRule P25 = new ProductionRule(MULT_EXPR_PRIME, Collections.singletonList(Symbol.EMPTY));
+    public static final ProductionRule P26 = new ProductionRule(SIMPLE_EXPR, Collections.singletonList(ID));
+    public static final ProductionRule P27 = new ProductionRule(SIMPLE_EXPR, Collections.singletonList(NUM));
     public static final ProductionRule P28 = new ProductionRule(SIMPLE_EXPR, Arrays.asList(OPEN_PARENTHESES, ARITH_EXPR, CLOSE_PARENTHESES));
 
     public static final Symbol startSymbol = PROGRAM;

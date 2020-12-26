@@ -19,6 +19,6 @@ public class Terminal extends Symbol{
 
     @Override
     public String toString() {
-        return "\"" + getValue() + "\"";
+        return getValue();
     }
 }

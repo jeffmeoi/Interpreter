@@ -10,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         // 读入文件的所有行
-        String context = FileUtils.read("test1.toy");
+        String context = FileUtils.readAll("test1.toy");
         // 初始化tokenizer
         Tokenizer tokenizer = new Tokenizer(context);
         // 读入所有token
@@ -21,13 +21,13 @@ public class Main {
                 tokenList.add(token);
             }
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         // 判断token的类型并set
         for(Token token : tokenList) {
             token.setTokenType(LexicalAnalyzer.getTokenType(token.getAttributeValue()));
             sb.append(token).append(System.lineSeparator());
         }
         // 写回文件
-        FileUtils.write("test1.tok", sb.toString());
+        FileUtils.writeAll("test1.tok", sb.toString());
     }
 }

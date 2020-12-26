@@ -59,14 +59,14 @@ public class Item {
 
     @Override
     public String toString() {
-        StringBuffer right = new StringBuffer();
+        StringBuilder right = new StringBuilder();
         for(int i = 0; i < rule.getRight().size(); i++) {
             if(i == position)
                 right.append(". ");
-            right.append(rule.getRight().get(i).getValue()).append(" ");
+            right.append(rule.getRight().get(i)).append(" ");
         }
         if(position >= rule.getRight().size())
             right.append(". ");
-        return rule.getLeft().getValue() + " -> " + right.toString();
+        return rule.getLeft() + " -> " + right.toString();
     }
 }

@@ -26,11 +26,7 @@ public class GotoTable {
     }
 
     public void put(Integer state, Symbol symbol, Integer gotoIndex){
-        Map<Symbol, Integer> line = table.get(state);
-        if(line == null) {
-            line = new HashMap<>();
-            table.put(state, line);
-        }
+        Map<Symbol, Integer> line = table.computeIfAbsent(state, k -> new HashMap<>());
         line.put(symbol, gotoIndex);
     }
 
@@ -40,13 +36,13 @@ public class GotoTable {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         List<Map.Entry<Integer, Map<Symbol, Integer>>> entryList = table.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getKey)).collect(Collectors.toList());
         for(Map.Entry<Integer, Map<Symbol, Integer>> entry : entryList) {
             Map<Symbol, Integer> line = entry.getValue();
-            sb.append(entry.getKey() + "\t");
+            sb.append(entry.getKey()).append("\t");
             for(Map.Entry<Symbol, Integer> entries : line.entrySet()) {
-                sb.append(entries.getKey().getValue() + ":" + entries.getValue() + "\t");
+                sb.append(entries.getKey()).append(":").append(entries.getValue()).append("\t");
             }
             sb.append(System.lineSeparator());
         }

@@ -9,14 +9,12 @@ public class NonTerminal extends Symbol{
         super(value);
     }
 
-
     public NonTerminal(Symbol symbol) {
         super(symbol.getValue());
     }
 
-
     @Override
     public String toString() {
-        return "\"" + getValue() + "\"";
+        return getValue();
     }
 }

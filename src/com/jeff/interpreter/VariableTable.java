@@ -5,6 +5,9 @@ import java.util.Map;
 
 public class VariableTable {
 
+    /**
+     * 变量表内的变量类
+     */
     static class Variable {
         String name;
         Number val;
@@ -17,24 +20,38 @@ public class VariableTable {
 
     private final Map<String, Variable> map = new HashMap<>();
 
+    /**
+     * 存入新的变量，变量名为token的lexeme，变量值为token的lexval
+     * @param token 输入的token
+     */
     public void put(Token token){
         Variable variable = new Variable();
         variable.name = token.getLexeme();
-        variable.val = token.getLexVal();
+        variable.val = token.getLexval();
         map.put(variable.name, variable);
     }
 
+    /**
+     * 获取变量的值
+     * @param name 变量标识符
+     * @return 变量值
+     */
     public Number getValue(String name){
         Variable variable = map.get(name);
         if(variable == null)
-            throw new VariableNotExistException();
+            throw new VariableNotExistException(name);
         return variable.val;
     }
 
+    /**
+     * 设置变量的值
+     * @param name 变量标识符
+     * @param val 变量值
+     */
     public void setValue(String name, Number val) {
         Variable variable = map.get(name);
         if(variable == null)
-            throw new VariableNotExistException();
+            throw new VariableNotExistException(name);
         variable.val = val;
     }
 

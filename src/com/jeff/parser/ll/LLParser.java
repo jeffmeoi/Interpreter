@@ -97,7 +97,7 @@ public class LLParser {
             // 输出缩进和符号
             for(int i = 0; i < layer*space; i++)
                 System.out.print(" ");
-            System.out.println(symbol.getValue());
+            System.out.println(symbol);
             // 如果该符号为非终结符，则用栈顶的产生式匹配该符号，并移除栈顶，递归进入下一层
             if(symbol instanceof NonTerminal) {
                 ProductionRule rule = ruleList.pop();
