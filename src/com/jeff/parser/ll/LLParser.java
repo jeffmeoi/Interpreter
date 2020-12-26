@@ -1,5 +1,6 @@
 package com.jeff.parser.ll;
 
+import com.jeff.StringUtils;
 import com.jeff.parser.NonTerminal;
 import com.jeff.parser.ProductionRule;
 import com.jeff.parser.Symbol;
@@ -22,7 +23,7 @@ public class LLParser {
 
         // 文本以空格作为分隔符分为多个token，每个token都是终结符，在列表尾部添加END($)作为结尾
         LinkedList<Symbol> tokenStack = new LinkedList<>();
-        for(String token : context.split("\\s+"))
+        for(String token : StringUtils.separateBySpace(context))
             tokenStack.add(new Terminal(token));
         tokenStack.add(Terminal.END);
 

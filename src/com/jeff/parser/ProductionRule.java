@@ -1,8 +1,5 @@
 package com.jeff.parser;
 
-import com.jeff.FileUtils;
-
-import java.io.IOException;
 import java.util.*;
 
 public class ProductionRule {
@@ -10,9 +7,9 @@ public class ProductionRule {
 
 
     // 产生式左侧必为一个非终结符
-    private NonTerminal left;
+    private final NonTerminal left;
     // 产生式右侧为符号的列表，可能为终结符也可能为非终结符
-    private List<Symbol> right;
+    private final List<Symbol> right;
 
     public boolean isDerivationBy(Symbol symbol) {
         return left.equals(symbol);
@@ -30,7 +27,7 @@ public class ProductionRule {
     public static List<ProductionRule> getProductionRulesByStringList(List<String> lines, Map<Terminal, Terminal> terminals, Map<NonTerminal, NonTerminal> nonTerminals){
         List<ProductionRule> rules = new ArrayList<>();
         for(String line : lines)
-            generateProductionRule(line, terminals, nonTerminals).ifPresent(rule -> rules.add(rule));
+            generateProductionRule(line, terminals, nonTerminals).ifPresent(rules::add);
         return rules;
     }
 
@@ -44,15 +41,15 @@ public class ProductionRule {
         List<Symbol> right = new ArrayList<>();
         for(String str : rightTokens) {
             Optional<Symbol> symbolOpt = getSymbolByString(str, terminals, nonTerminals);
-            symbolOpt.ifPresent(symbol -> right.add(symbol));
+            symbolOpt.ifPresent(right::add);
         }
-        return Optional.of(new ProductionRule((NonTerminal) leftOpt.get(), right));
+        return leftOpt.map(symbol -> new ProductionRule((NonTerminal) symbol, right));
     }
 
     private static Optional<Symbol> getSymbolByString(String str, Map<Terminal, Terminal> terminals, Map<NonTerminal, NonTerminal> nonTerminals) {
         if (str.equals("~")) {
-            return Optional.empty();
-        } else if (nonTerminals.keySet().contains(new NonTerminal(str))) {
+            return Optional.of(Symbol.EMPTY);
+        } else if (nonTerminals.containsKey(new NonTerminal(str))) {
             NonTerminal nonTerminal = new NonTerminal(str);
             return Optional.of(nonTerminals.getOrDefault(nonTerminal, nonTerminal));        // 去重，防止出现多个Symbol相同值但不是同一个对象的情况
         } else {
@@ -65,16 +62,8 @@ public class ProductionRule {
         return left;
     }
 
-    public void setLeft(NonTerminal left) {
-        this.left = left;
-    }
-
     public List<Symbol> getRight() {
         return right;
-    }
-
-    public void setRight(List<Symbol> right) {
-        this.right = right;
     }
 
     @Override
@@ -93,9 +82,9 @@ public class ProductionRule {
 
     @Override
     public String toString() {
-        StringBuffer rightString = new StringBuffer();
-        for(int i = 0; i < right.size(); i++) {
-            rightString.append(right.get(i).getValue()).append(" ");
+        StringBuilder rightString = new StringBuilder();
+        for (Symbol symbol : right) {
+            rightString.append(symbol.getValue()).append(" ");
         }
         return left.getValue() + " => " + rightString.toString();
     }

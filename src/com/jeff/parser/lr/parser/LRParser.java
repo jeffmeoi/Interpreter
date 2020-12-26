@@ -84,7 +84,7 @@ public class LRParser {
         LinkedList<Symbol> symbolList = new LinkedList<>();
         Symbol startSymbol = ruleStack.peek().getLeft();
         symbolList.add(startSymbol);
-        StringBuffer sb = new StringBuffer(startSymbol.getValue());
+        StringBuilder sb = new StringBuilder(startSymbol.getValue());
         while(!ruleStack.isEmpty()) {
             ProductionRule rule = ruleStack.pop();
             for (int i = symbolList.size() - 1; i >= 0; i--) {
@@ -102,17 +102,5 @@ public class LRParser {
         return sb.toString();
     }
 
-    public static void main(String[] args) throws IOException {
-
-//        LRParser parser = new LRParser();
-//        String context = "{ ID = NUM ; }";
-
-        LRParser parser = new LRParser("start-symbol", "terminals", "non-terminals", "rules");
-        String context = "int ID = INTNUM ; int ID = INTNUM ; real ID = REALNUM ; { }";
-
-        List<Terminal> tokens = Arrays.asList(context.split("\\s+")).stream().map(s -> new Terminal(s)).collect(Collectors.toList());
-        LinkedList<ProductionRule> ruleStack = parser.parse(tokens);
-        System.out.println(parser.generateDerivationString(ruleStack));
-    }
 
 }
