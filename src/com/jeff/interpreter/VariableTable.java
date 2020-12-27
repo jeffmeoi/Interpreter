@@ -22,12 +22,13 @@ public class VariableTable {
 
     /**
      * 存入新的变量，变量名为token的lexeme，变量值为token的lexval
-     * @param token 输入的token
+     * @param name 变量名
+     * @param val 变量值
      */
-    public void put(Token token){
+    public void put(String name, Number val){
         Variable variable = new Variable();
-        variable.name = token.getLexeme();
-        variable.val = token.getLexval();
+        variable.name = name;
+        variable.val = val;
         map.put(variable.name, variable);
     }
 

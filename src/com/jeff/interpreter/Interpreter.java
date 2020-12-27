@@ -36,7 +36,7 @@ public class Interpreter {
     // 解释器需要解释的文本
     private String context;
     // 由于该语法只需考虑一个作用域，因此只需要全局作用域的变量符号表
-    private VariableTable table;
+    private VariableTable variableTable = new VariableTable();
 
     public Interpreter() {
 
@@ -46,31 +46,16 @@ public class Interpreter {
     public void interpret(String context){
         this.context = context;
         this.lex = new Lex(context);
-        this.table = buildVariableTable();      // 生成全局变量符号表
         program(true);                      // 开始执行解释
+        if(!lex.current().match(END))
+            throw new InterpreterException(lex.current());
     }
 
-    public VariableTable buildVariableTable(){
-        Lex lex = new Lex(context);
-        VariableTable table = new VariableTable();
-        // 词法分析器将token类型为标识符identifier的加入全局变量符号表
-        while (lex.hasNext()) {
-            Token token = lex.next();
-            if (token.getTokenType() == TokenType.IDENTIFIER) {
-                table.put(token);
-            }
-        }
-        return table;
-    }
 
-    // 如果词法分析器已经成功匹配到END，则说明匹配成功，否则失败
-    public boolean isSuccess(){
-        return lex.current().match(END);
-    }
 
     // 打印解释完成后的符号表
     public void print() {
-        System.out.println(table);
+        System.out.println(variableTable);
     }
 
     /**
@@ -109,7 +94,7 @@ public class Interpreter {
             Token current = lex.current();
             syn = current.getLexval();  // 获取初始化的数值
             lex.match(INT_NUM);
-            table.setValue(id, syn);    // 执行初始化的赋值操作
+            variableTable.put(id, syn);         // 插入符号表
         } else if(token.match(REAL)) {
             lex.match(REAL);
             id = lex.match(ID);         // 获取ID的lexeme，即标识符的名字
@@ -117,7 +102,7 @@ public class Interpreter {
             Token current = lex.current();
             syn = current.getLexval();  // 获取初始化的数值
             lex.match(REAL_NUM);
-            table.setValue(id, syn);    // 执行初始化的赋值操作
+            variableTable.put(id, syn);         // 插入符号表
         }
     }
 
@@ -161,9 +146,11 @@ public class Interpreter {
             Number syn = arithexpr();       // id.val = arithexpr.syn
             lex.match(SEMICOLON);
             if(exec) {                      // 如果exec为false，则处于boolexpr为false的分支，赋值操作不执行
-                if(table.getValue(id) instanceof Integer && syn instanceof Double)      // 不允许将real类型的表达式值赋给int类型
+                if(variableTable.getValue(id) instanceof Integer && syn instanceof Double)      // 不允许将real类型的表达式值赋给int类型
                     throw new TypeCheckException(id, "int", syn, "real");
-                table.setValue(id, syn);
+                if(variableTable.getValue(id) instanceof Double && syn instanceof Integer)      // 不允许将real类型的表达式值赋给int类型
+                    variableTable.setValue(id, (double) syn.intValue());
+                variableTable.setValue(id, syn);
             }
         }
     }
@@ -230,6 +217,8 @@ public class Interpreter {
         if(token.match(PLUS)) {
             lex.match(PLUS);
             Number multexprSyn = multexpr();
+            if(multexprSyn == null)
+                throw new ExpressionException();
             if(inh instanceof Integer && multexprSyn instanceof  Integer)       // arithexprprime1.inh = arithexprprime.inh + multexpr.syn
                 syn = arithexprprime(inh.intValue() + multexprSyn.intValue());  // arithexprprime.syn = arithexprprime1.syn
             else
@@ -263,6 +252,8 @@ public class Interpreter {
         if(token.match(MULTIPLY)) {
             lex.match(MULTIPLY);
             Number simpleexprSyn = simpleexpr();
+            if(simpleexprSyn == null)
+                throw new ExpressionException();
             if(inh instanceof Integer && simpleexprSyn instanceof  Integer)             // arithexprprime1.inh = multexprprime.inh * simpleexpr.syn
                 syn = arithexprprime(inh.intValue() * simpleexprSyn.intValue());    // multexprprime.syn = arithexprprime1.syn
             else
@@ -287,7 +278,7 @@ public class Interpreter {
             syn = arithexpr();              // simpleexpr.syn = arithexpr.syn
             lex.match(CLOSE_PARENTHESES);
         } else if(token.match(ID)) {
-            syn = table.getValue(token.getLexeme());        // simpleexpr.syn = ID.lexeme
+            syn = variableTable.getValue(token.getLexeme());        // simpleexpr.syn = ID.lexeme
             lex.next();
         } else if(token.match(INT_NUM)) {
             syn = token.getLexval();                        // simpleexpr.syn = INT_NUM.lexval

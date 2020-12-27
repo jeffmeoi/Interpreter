@@ -7,4 +7,9 @@ public class VariableNotExistException extends RuntimeException {
     public VariableNotExistException(String name) {
         this.variableName = name;
     }
+
+    @Override
+    public String toString() {
+        return "variable " + variableName + " is not exist";
+    }
 }
