@@ -25,7 +25,10 @@ public class Main {
         // 判断token的类型并set
         for(Token token : tokenList) {
             token.setTokenType(LexicalAnalyzer.getTokenType(token.getAttributeValue()));
-            sb.append(token).append(System.lineSeparator());
+            if(!token.getTokenType().equals("errors"))
+                sb.append(token).append(System.lineSeparator());
+            else
+                System.out.println(token);
         }
         // 写回文件
         FileUtils.writeAll("test1.tok", sb.toString());
