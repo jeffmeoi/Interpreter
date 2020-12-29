@@ -65,7 +65,7 @@
                 └─lr									// SLR相关
                     │  Main.java							// Main类实现对SLR的调用
                     │
-                    ├─parser								// SLR解释器
+                    ├─parser								// SLR解释器(ex3)
                     │      LRConstant.java						// SLR的起始符号，终结符，非终结符，解析表
                     │      LRParser.java						// SLR解析器
                     │      SLRParsingException.java				// SLR解析异常
