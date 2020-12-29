@@ -3,12 +3,13 @@ package com.jeff.interpreter;
 /**
  * 解释器
  */
-public class Interpreter {
+public class InterpreterEx2Grammar {
 
     // 终结符字符串常量
     public static final String OPEN_BRACE = "{";
     public static final String CLOSE_BRACE = "}";
     public static final String IF = "if";
+    public static final String WHILE = "while";
     public static final String OPEN_PARENTHESES = "(";
     public static final String CLOSE_PARENTHESES = ")";
     public static final String THEN = "then";
@@ -25,29 +26,23 @@ public class Interpreter {
     public static final String MINUS = "-";
     public static final String MULTIPLY = "*";
     public static final String DIVIDE = "/";
-    public static final String INT_NUM = "INTNUM";
-    public static final String REAL_NUM = "REALNUM";
-    public static final String INT = "int";
-    public static final String REAL = "real";
+    public static final String NUM = "NUM";
     public static final String END = "$";
 
     // 词法分析器
     private Lex lex;
-    // 解释器需要解释的文本
-    private String context;
     // 由于该语法只需考虑一个作用域，因此只需要全局作用域的变量符号表
-    private VariableTable variableTable = new VariableTable();
+    private final VariableTable variableTable = new VariableTable();
 
-    public Interpreter() {
+    public InterpreterEx2Grammar() {
 
     }
 
     // 开始解释程序
     public void interpret(String context){
-        this.context = context;
         this.lex = new Lex(context);
         program(true);                      // 开始执行解释
-        if(!lex.current().match(END))
+        if(!lex.current().match2(END))
             throw new InterpreterException(lex.current());
     }
 
@@ -65,61 +60,24 @@ public class Interpreter {
     public void program(boolean exec){
         Token token = lex.current();
         // 产生式1的firstSet为{, int, real
-        if(token.match(OPEN_BRACE) || token.match(INT) || token.match(REAL)) {
-            decls();
+        if(token.match2(OPEN_BRACE)) {
             compoundstmt(exec);
         }
     }
-
-
-    private void decls() {
-        Token token = lex.current();
-        // match the first set
-        if(token.match(INT) || token.match(REAL)) {
-            decl();
-            lex.match(SEMICOLON);
-            decls();
-        }
-    }
-
-    private void decl() {
-        Token token = lex.current();
-        Number syn;
-        String id;
-        // match the first set
-        if(token.match(INT)) {
-            lex.match(INT);
-            id = lex.match(ID);         // 获取ID的lexeme，即标识符的名字
-            lex.match(IS);
-            Token current = lex.current();
-            syn = current.getLexval();  // 获取初始化的数值
-            lex.match(INT_NUM);
-            variableTable.put(id, syn);         // 插入符号表
-        } else if(token.match(REAL)) {
-            lex.match(REAL);
-            id = lex.match(ID);         // 获取ID的lexeme，即标识符的名字
-            lex.match(IS);
-            Token current = lex.current();
-            syn = current.getLexval();  // 获取初始化的数值
-            lex.match(REAL_NUM);
-            variableTable.put(id, syn);         // 插入符号表
-        }
-    }
-
     public void compoundstmt(boolean exec){
         Token token = lex.current();
-        // match the first set
-        if(token.match(OPEN_BRACE)) {
-            lex.match(OPEN_BRACE);
+        // match2 the first set
+        if(token.match2(OPEN_BRACE)) {
+            lex.match2(OPEN_BRACE);
             stmts(exec);
-            lex.match(CLOSE_BRACE);
+            lex.match2(CLOSE_BRACE);
         }
     }
 
     private void stmts(boolean exec) {
         Token token = lex.current();
-        // match the first set
-        if(token.match(OPEN_BRACE) || token.match(IF) || token.match(ID)) {
+        // match2 the first set
+        if(token.match2(OPEN_BRACE) || token.match2(IF) || token.match2(ID) || token.match2(WHILE)) {
             stmt(exec);
             stmts(exec);
         }
@@ -127,30 +85,56 @@ public class Interpreter {
 
     private void stmt(boolean exec) {
         Token token = lex.current();
-        // match the first set
-        if(token.match(OPEN_BRACE)) {
+        // match2 the first set
+        if(token.match2(OPEN_BRACE)) {
             compoundstmt(exec);
-        } else if(token.match(IF)) {
+        } else if(token.match2(IF)) {
             ifstmt(exec);
-        } else if(token.match(ID)) {
+        } else if(token.match2(ID)) {
             assgstmt(exec);
+        } else if(token.match2(WHILE)) {
+            whilestmt(exec);
+        }
+    }
+
+    private void whilestmt(boolean exec) {
+        Token token = lex.current();
+        if(token.match2(WHILE)) {
+            boolean condition;
+            do {
+                int currPos = lex.getCurrPos();
+                lex.match2(WHILE);
+                lex.match2(OPEN_PARENTHESES);
+                Boolean boolsyn = boolexpr();
+                condition = exec && boolsyn != null && boolsyn;
+                lex.match2(CLOSE_PARENTHESES);
+                stmt(condition);
+                if(!condition)
+                    break;
+                lex.setCurrPos(currPos);
+            } while (true);
         }
     }
 
     private void assgstmt(boolean exec) {
         Token token = lex.current();
-        // match the first set
-        if(token.match(ID)) {
-            String id = lex.match(ID);
-            lex.match(IS);
+        // match2 the first set
+        if(token.match2(ID)) {
+            String id = lex.match2(ID).getLexeme();
+            lex.match2(IS);
             Number syn = arithexpr();       // id.val = arithexpr.syn
-            lex.match(SEMICOLON);
+            lex.match2(SEMICOLON);
             if(exec) {                      // 如果exec为false，则处于boolexpr为false的分支，赋值操作不执行
-                if(variableTable.getValue(id) instanceof Integer && syn instanceof Double)      // 不允许将real类型的表达式值赋给int类型
-                    throw new TypeCheckException(id, "int", syn, "real");
-                if(variableTable.getValue(id) instanceof Double && syn instanceof Integer)      // 不允许将real类型的表达式值赋给int类型
-                    variableTable.setValue(id, (double) syn.intValue());
-                variableTable.setValue(id, syn);
+                try {
+                    if (variableTable.getValue(id) instanceof Integer && syn instanceof Double)      // 不允许将real类型的表达式值赋给int类型
+                        throw new TypeCheckException(id, "int", syn, "real");
+                    else if (variableTable.getValue(id) instanceof Double && syn instanceof Integer)      // 不允许将real类型的表达式值赋给int类型
+                        variableTable.put(id, (double) syn.intValue());
+                    else
+                        variableTable.put(id, syn);
+                }   catch (VariableNotExistException e) {
+                    variableTable.put(id, syn);
+                }
             }
         }
     }
@@ -158,8 +142,8 @@ public class Interpreter {
     private Number arithexpr() {
         Token token = lex.current();
         Number syn = null;
-        // match the first set
-        if(token.match(OPEN_PARENTHESES) || token.match(ID) || token.match(INT_NUM) || token.match(REAL_NUM)) {
+        // match2 the first set
+        if(token.match2(OPEN_PARENTHESES) || token.match2(ID) || token.match2(NUM)) {
             Number multexprSyn = multexpr();
             syn = arithexprprime(multexprSyn);              // arithexprprime.inh = multexpr.syn
         }
@@ -207,15 +191,15 @@ public class Interpreter {
     }
 
     /**
-     * @param inh arithexprprime左侧的multiexpr的综合属性值
-     * @return 含arithexprprime左侧的multiexpr在内的综合属性值
+     * @param inh arithexprprime左侧的multexpr的综合属性值
+     * @return 含arithexprprime左侧的multexpr在内的综合属性值
      */
     private Number arithexprprime(Number inh) {
         Token token = lex.current();
         Number syn = inh;       // 当arithexprprime为epsilon的时候，即只存在左操作数，不存在运算符和右操作数的时候，运算的结果应该是左操作数的值
-        // match the first set
-        if(token.match(PLUS)) {
-            lex.match(PLUS);
+        // match2 the first set
+        if(token.match2(PLUS)) {
+            lex.match2(PLUS);
             Number multexprSyn = multexpr();
             if(multexprSyn == null)
                 throw new ExpressionException();
@@ -223,8 +207,8 @@ public class Interpreter {
                 syn = arithexprprime(inh.intValue() + multexprSyn.intValue());  // arithexprprime.syn = arithexprprime1.syn
             else
                 syn = arithexprprime(inh.doubleValue() + multexprSyn.doubleValue());
-        } else if(token.match(MINUS)) {
-            lex.match(MINUS);
+        } else if(token.match2(MINUS)) {
+            lex.match2(MINUS);
             Number multexprSyn = multexpr();
             if(inh instanceof Integer && multexprSyn instanceof  Integer)       // arithexprprime1.inh = arithexprprime.inh - multexpr.syn
                 syn = arithexprprime(inh.intValue() - multexprSyn.intValue());  // arithexprprime.syn = arithexprprime1.syn
@@ -237,8 +221,8 @@ public class Interpreter {
     private Number multexpr() {
         Token token = lex.current();
         Number syn = null;
-        // match the first set
-        if(token.match(OPEN_PARENTHESES) || token.match(ID) || token.match(INT_NUM) || token.match(REAL_NUM)) {
+        // match2 the first set
+        if(token.match2(OPEN_PARENTHESES) || token.match2(ID) || token.match2(NUM)) {
             Number simpleexprSyn = simpleexpr();         // multexprprime.inh = simpleexpr.syn
             syn = multexprprime(simpleexprSyn);         // multexpr.syn = multexprprime.syn
         }
@@ -248,9 +232,9 @@ public class Interpreter {
     private Number multexprprime(Number inh) {
         Token token = lex.current();
         Number syn = inh;
-        // match the first set
-        if(token.match(MULTIPLY)) {
-            lex.match(MULTIPLY);
+        // match2 the first set
+        if(token.match2(MULTIPLY)) {
+            lex.match2(MULTIPLY);
             Number simpleexprSyn = simpleexpr();
             if(simpleexprSyn == null)
                 throw new ExpressionException();
@@ -258,8 +242,8 @@ public class Interpreter {
                 syn = arithexprprime(inh.intValue() * simpleexprSyn.intValue());    // multexprprime.syn = arithexprprime1.syn
             else
                 syn = arithexprprime(inh.doubleValue() * simpleexprSyn.doubleValue());
-        } else if(token.match(DIVIDE)) {
-            lex.match(DIVIDE);
+        } else if(token.match2(DIVIDE)) {
+            lex.match2(DIVIDE);
             Number simpleexprSyn = simpleexpr();
             if(inh instanceof Integer && simpleexprSyn instanceof Integer)             // arithexprprime1.inh = multexprprime.inh / simpleexpr.syn
                 syn = arithexprprime(inh.intValue() / simpleexprSyn.intValue());    // multexprprime.syn = arithexprprime1.syn
@@ -272,18 +256,15 @@ public class Interpreter {
     private Number simpleexpr() {
         Token token = lex.current();
         Number syn = null;
-        // match the first set
-        if(token.match(OPEN_PARENTHESES)) {
-            lex.match(OPEN_PARENTHESES);
+        // match2 the first set
+        if(token.match2(OPEN_PARENTHESES)) {
+            lex.match2(OPEN_PARENTHESES);
             syn = arithexpr();              // simpleexpr.syn = arithexpr.syn
-            lex.match(CLOSE_PARENTHESES);
-        } else if(token.match(ID)) {
+            lex.match2(CLOSE_PARENTHESES);
+        } else if(token.match2(ID)) {
             syn = variableTable.getValue(token.getLexeme());        // simpleexpr.syn = ID.lexeme
             lex.next();
-        } else if(token.match(INT_NUM)) {
-            syn = token.getLexval();                        // simpleexpr.syn = INT_NUM.lexval
-            lex.next();
-        } else if(token.match(REAL_NUM)) {
+        } else if(token.match2(NUM)) {
             syn = token.getLexval();                        // simpleexpr.syn = REAL_NUM.lexval
             lex.next();
         }
@@ -292,15 +273,15 @@ public class Interpreter {
 
     private void ifstmt(boolean exec) {
         Token token = lex.current();
-        // match the first set
-        if(token.match(IF)) {
-            lex.match(IF);
-            lex.match(OPEN_PARENTHESES);
+        // match2 the first set
+        if(token.match2(IF)) {
+            lex.match2(IF);
+            lex.match2(OPEN_PARENTHESES);
             Boolean boolsyn = boolexpr();
-            lex.match(CLOSE_PARENTHESES);
-            lex.match(THEN);
+            lex.match2(CLOSE_PARENTHESES);
+            lex.match2(THEN);
             stmt(exec && boolsyn != null && boolsyn);                         // 如果ifstmt处于被执行的逻辑，并且boolexpr.syn为true，则stmt能够被执行
-            lex.match(ELSE);
+            lex.match2(ELSE);
             stmt(exec && boolsyn != null && !boolsyn);                         // 如果ifstmt处于被执行的逻辑，并且boolexpr.syn为false，则stmt能够被执行
         }
     }
@@ -308,8 +289,8 @@ public class Interpreter {
     private Boolean boolexpr() {
         Token token = lex.current();
         Boolean syn = null;
-        // match the first set
-        if(token.match(OPEN_PARENTHESES) || token.match(ID) || token.match(INT_NUM) || token.match(REAL_NUM)) {
+        // match2 the first set
+        if(token.match2(OPEN_PARENTHESES) || token.match2(ID) || token.match2(NUM)) {
             Number arithexprSyn = arithexpr();                                                      // arithexpr1.inh = arithexpr.syn
             String op = boolop();                                                                   // arithexpr1.op = boolop.op
             syn = arithexpr(arithexprSyn, op);                                                    // boolexpr.syn = arithexpr1.syn
@@ -320,8 +301,8 @@ public class Interpreter {
     private String boolop() {
         Token token = lex.current();
         String syn = null;
-        // match the first set
-        if(token.match(LESS_THAN) || token.match(LESS_THAN_OR_EQUAL) || token.match(GREATER_THAN) || token.match(GREATER_THAN_OR_EQUAL) || token.match(EQUAL)) {
+        // match2 the first set
+        if(token.match2(LESS_THAN) || token.match2(LESS_THAN_OR_EQUAL) || token.match2(GREATER_THAN) || token.match2(GREATER_THAN_OR_EQUAL) || token.match2(EQUAL)) {
             syn = token.getLexeme();            // boolop.op = token.lexeme
             lex.next();
         }

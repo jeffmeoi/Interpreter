@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class Lex implements Iterator<Token> {
 
 
-    private static final Pattern KEYWORD = Pattern.compile("^((int)|(real)|(if)|(then)|(else))$");
+    private static final Pattern KEYWORD = Pattern.compile("^((int)|(real)|(if)|(then)|(else)|(while))$");
     private static final Pattern DELIMITER = Pattern.compile("^([(){};,])$");
     private static final Pattern INT_NUM = Pattern.compile("^\\d+$");
     private static final Pattern REAL_NUM = Pattern.compile("^\\d+\\.\\d+$");
@@ -55,17 +55,33 @@ public class Lex implements Iterator<Token> {
         return TokenType.ERROR;
     }
 
+
     /**
      * 匹配token，并且将移到下一个token
-     * @param tokenStr 需要匹配的token类型()
+     * @param tokenStr 需要匹配的token类型
      * @return lexeme
      */
-    public String match(String tokenStr){
+    public Token match(String tokenStr){
         Token token = current();
         if(!token.match(tokenStr))
             throw new NotMatchedException(token, tokenStr);
         next();
-        return token.getLexeme();
+        return token;
+    }
+
+
+    /**
+     * ex2的文法
+     * 匹配token，并且将移到下一个token
+     * @param tokenStr 需要匹配的token类型
+     * @return lexeme
+     */
+    public Token match2(String tokenStr){
+        Token token = current();
+        if(!token.match2(tokenStr))
+            throw new NotMatchedException(token, tokenStr);
+        next();
+        return token;
     }
 
     /**
@@ -78,7 +94,15 @@ public class Lex implements Iterator<Token> {
     }
 
     public Token current(){
-        return tokenList.get(tokenList.size() - 1);
+        return tokenList.get(currPos);
+    }
+
+    public int getCurrPos() {
+        return currPos;
+    }
+
+    public void setCurrPos(int currPos) {
+        this.currPos = currPos;
     }
 
     /**
@@ -86,7 +110,9 @@ public class Lex implements Iterator<Token> {
      * @return token，不存在返回null
      */
     public Token next(){
-        if(currPos == tokenStringList.size() - 1) {
+        if(currPos + 1 < tokenList.size()) {
+            return tokenList.get(++currPos);
+        } else if(currPos == tokenStringList.size() - 1) {
             currPos++;
             Token end = new Token(TokenType.END, "$", null);
             tokenList.add(end);
