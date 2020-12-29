@@ -1,8 +1,8 @@
 package com.jeff.parser.lr.table;
 
 public class Action {
-    private ActionType type;
-    private int num;
+    private final ActionType type;
+    private final int num;
 
     public boolean isShift(){
         return ActionType.SHIFT.equals(type);

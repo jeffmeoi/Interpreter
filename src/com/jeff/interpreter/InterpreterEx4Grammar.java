@@ -33,10 +33,8 @@ public class InterpreterEx4Grammar {
 
     // 词法分析器
     private Lex lex;
-    // 解释器需要解释的文本
-    private String context;
     // 由于该语法只需考虑一个作用域，因此只需要全局作用域的变量符号表
-    private VariableTable variableTable = new VariableTable();
+    private final VariableTable variableTable = new VariableTable();
 
     public InterpreterEx4Grammar() {
 
@@ -44,10 +42,9 @@ public class InterpreterEx4Grammar {
 
     // 开始解释程序
     public void interpret(String context){
-        this.context = context;
         this.lex = new Lex(context);
         program(true);                      // 开始执行解释
-        if(!lex.current().match(END))
+        if(!lex.current().match4Ex4Grammar(END))
             throw new InterpreterException(lex.current());
     }
 
@@ -65,7 +62,7 @@ public class InterpreterEx4Grammar {
     public void program(boolean exec){
         Token token = lex.current();
         // 产生式1的firstSet为{, int, real
-        if(token.match(OPEN_BRACE) || token.match(INT) || token.match(REAL)) {
+        if(token.match4Ex4Grammar(OPEN_BRACE) || token.match4Ex4Grammar(INT) || token.match4Ex4Grammar(REAL)) {
             decls();
             compoundstmt(exec);
         }
@@ -74,8 +71,8 @@ public class InterpreterEx4Grammar {
 
     private void decls() {
         Token token = lex.current();
-        // match the first set
-        if(token.match(INT) || token.match(REAL)) {
+        // match4Ex4Grammar the first set
+        if(token.match4Ex4Grammar(INT) || token.match4Ex4Grammar(REAL)) {
             decl();
             lex.match(SEMICOLON);
             decls();
@@ -86,14 +83,14 @@ public class InterpreterEx4Grammar {
         Token token = lex.current();
         Number syn;
         String id;
-        // match the first set
-        if(token.match(INT)) {
+        // match4Ex4Grammar the first set
+        if(token.match4Ex4Grammar(INT)) {
             lex.match(INT);
             id = lex.match(ID).getLexeme();         // 获取ID的lexeme，即标识符的名字
             lex.match(IS);
             syn = lex.match(INT_NUM).getLexval();
             variableTable.put(id, syn);         // 插入符号表
-        } else if(token.match(REAL)) {
+        } else if(token.match4Ex4Grammar(REAL)) {
             lex.match(REAL);
             id = lex.match(ID).getLexeme();         // 获取ID的lexeme，即标识符的名字
             lex.match(IS);
@@ -104,8 +101,8 @@ public class InterpreterEx4Grammar {
 
     public void compoundstmt(boolean exec){
         Token token = lex.current();
-        // match the first set
-        if(token.match(OPEN_BRACE)) {
+        // match4Ex4Grammar the first set
+        if(token.match4Ex4Grammar(OPEN_BRACE)) {
             lex.match(OPEN_BRACE);
             stmts(exec);
             lex.match(CLOSE_BRACE);
@@ -114,8 +111,8 @@ public class InterpreterEx4Grammar {
 
     private void stmts(boolean exec) {
         Token token = lex.current();
-        // match the first set
-        if(token.match(OPEN_BRACE) || token.match(IF) || token.match(ID)) {
+        // match4Ex4Grammar the first set
+        if(token.match4Ex4Grammar(OPEN_BRACE) || token.match4Ex4Grammar(IF) || token.match4Ex4Grammar(ID)) {
             stmt(exec);
             stmts(exec);
         }
@@ -123,20 +120,20 @@ public class InterpreterEx4Grammar {
 
     private void stmt(boolean exec) {
         Token token = lex.current();
-        // match the first set
-        if(token.match(OPEN_BRACE)) {
+        // match4Ex4Grammar the first set
+        if(token.match4Ex4Grammar(OPEN_BRACE)) {
             compoundstmt(exec);
-        } else if(token.match(IF)) {
+        } else if(token.match4Ex4Grammar(IF)) {
             ifstmt(exec);
-        } else if(token.match(ID)) {
+        } else if(token.match4Ex4Grammar(ID)) {
             assgstmt(exec);
         }
     }
 
     private void assgstmt(boolean exec) {
         Token token = lex.current();
-        // match the first set
-        if(token.match(ID)) {
+        // match4Ex4Grammar the first set
+        if(token.match4Ex4Grammar(ID)) {
             String id = lex.match(ID).getLexeme();
             lex.match(IS);
             Number syn = arithexpr();       // id.val = arithexpr.syn
@@ -154,8 +151,8 @@ public class InterpreterEx4Grammar {
     private Number arithexpr() {
         Token token = lex.current();
         Number syn = null;
-        // match the first set
-        if(token.match(OPEN_PARENTHESES) || token.match(ID) || token.match(INT_NUM) || token.match(REAL_NUM)) {
+        // match4Ex4Grammar the first set
+        if(token.match4Ex4Grammar(OPEN_PARENTHESES) || token.match4Ex4Grammar(ID) || token.match4Ex4Grammar(INT_NUM) || token.match4Ex4Grammar(REAL_NUM)) {
             Number multexprSyn = multexpr();
             syn = arithexprprime(multexprSyn);              // arithexprprime.inh = multexpr.syn
         }
@@ -203,14 +200,14 @@ public class InterpreterEx4Grammar {
     }
 
     /**
-     * @param inh arithexprprime左侧的multiexpr的综合属性值
-     * @return 含arithexprprime左侧的multiexpr在内的综合属性值
+     * @param inh arithexprprime左侧的multexpr的综合属性值
+     * @return 含arithexprprime左侧的multexpr在内的综合属性值
      */
     private Number arithexprprime(Number inh) {
         Token token = lex.current();
         Number syn = inh;       // 当arithexprprime为epsilon的时候，即只存在左操作数，不存在运算符和右操作数的时候，运算的结果应该是左操作数的值
-        // match the first set
-        if(token.match(PLUS)) {
+        // match4Ex4Grammar the first set
+        if(token.match4Ex4Grammar(PLUS)) {
             lex.match(PLUS);
             Number multexprSyn = multexpr();
             if(multexprSyn == null)
@@ -219,7 +216,7 @@ public class InterpreterEx4Grammar {
                 syn = arithexprprime(inh.intValue() + multexprSyn.intValue());  // arithexprprime.syn = arithexprprime1.syn
             else
                 syn = arithexprprime(inh.doubleValue() + multexprSyn.doubleValue());
-        } else if(token.match(MINUS)) {
+        } else if(token.match4Ex4Grammar(MINUS)) {
             lex.match(MINUS);
             Number multexprSyn = multexpr();
             if(inh instanceof Integer && multexprSyn instanceof  Integer)       // arithexprprime1.inh = arithexprprime.inh - multexpr.syn
@@ -233,8 +230,8 @@ public class InterpreterEx4Grammar {
     private Number multexpr() {
         Token token = lex.current();
         Number syn = null;
-        // match the first set
-        if(token.match(OPEN_PARENTHESES) || token.match(ID) || token.match(INT_NUM) || token.match(REAL_NUM)) {
+        // match4Ex4Grammar the first set
+        if(token.match4Ex4Grammar(OPEN_PARENTHESES) || token.match4Ex4Grammar(ID) || token.match4Ex4Grammar(INT_NUM) || token.match4Ex4Grammar(REAL_NUM)) {
             Number simpleexprSyn = simpleexpr();         // multexprprime.inh = simpleexpr.syn
             syn = multexprprime(simpleexprSyn);         // multexpr.syn = multexprprime.syn
         }
@@ -244,8 +241,8 @@ public class InterpreterEx4Grammar {
     private Number multexprprime(Number inh) {
         Token token = lex.current();
         Number syn = inh;
-        // match the first set
-        if(token.match(MULTIPLY)) {
+        // match4Ex4Grammar the first set
+        if(token.match4Ex4Grammar(MULTIPLY)) {
             lex.match(MULTIPLY);
             Number simpleexprSyn = simpleexpr();
             if(simpleexprSyn == null)
@@ -254,7 +251,7 @@ public class InterpreterEx4Grammar {
                 syn = arithexprprime(inh.intValue() * simpleexprSyn.intValue());    // multexprprime.syn = arithexprprime1.syn
             else
                 syn = arithexprprime(inh.doubleValue() * simpleexprSyn.doubleValue());
-        } else if(token.match(DIVIDE)) {
+        } else if(token.match4Ex4Grammar(DIVIDE)) {
             lex.match(DIVIDE);
             Number simpleexprSyn = simpleexpr();
             if(inh instanceof Integer && simpleexprSyn instanceof Integer)             // arithexprprime1.inh = multexprprime.inh / simpleexpr.syn
@@ -268,18 +265,18 @@ public class InterpreterEx4Grammar {
     private Number simpleexpr() {
         Token token = lex.current();
         Number syn = null;
-        // match the first set
-        if(token.match(OPEN_PARENTHESES)) {
+        // match4Ex4Grammar the first set
+        if(token.match4Ex4Grammar(OPEN_PARENTHESES)) {
             lex.match(OPEN_PARENTHESES);
             syn = arithexpr();              // simpleexpr.syn = arithexpr.syn
             lex.match(CLOSE_PARENTHESES);
-        } else if(token.match(ID)) {
+        } else if(token.match4Ex4Grammar(ID)) {
             syn = variableTable.getValue(token.getLexeme());        // simpleexpr.syn = ID.lexeme
             lex.next();
-        } else if(token.match(INT_NUM)) {
+        } else if(token.match4Ex4Grammar(INT_NUM)) {
             syn = token.getLexval();                        // simpleexpr.syn = INT_NUM.lexval
             lex.next();
-        } else if(token.match(REAL_NUM)) {
+        } else if(token.match4Ex4Grammar(REAL_NUM)) {
             syn = token.getLexval();                        // simpleexpr.syn = REAL_NUM.lexval
             lex.next();
         }
@@ -288,8 +285,8 @@ public class InterpreterEx4Grammar {
 
     private void ifstmt(boolean exec) {
         Token token = lex.current();
-        // match the first set
-        if(token.match(IF)) {
+        // match4Ex4Grammar the first set
+        if(token.match4Ex4Grammar(IF)) {
             lex.match(IF);
             lex.match(OPEN_PARENTHESES);
             Boolean boolsyn = boolexpr();
@@ -304,8 +301,8 @@ public class InterpreterEx4Grammar {
     private Boolean boolexpr() {
         Token token = lex.current();
         Boolean syn = null;
-        // match the first set
-        if(token.match(OPEN_PARENTHESES) || token.match(ID) || token.match(INT_NUM) || token.match(REAL_NUM)) {
+        // match4Ex4Grammar the first set
+        if(token.match4Ex4Grammar(OPEN_PARENTHESES) || token.match4Ex4Grammar(ID) || token.match4Ex4Grammar(INT_NUM) || token.match4Ex4Grammar(REAL_NUM)) {
             Number arithexprSyn = arithexpr();                                                      // arithexpr1.inh = arithexpr.syn
             String op = boolop();                                                                   // arithexpr1.op = boolop.op
             syn = arithexpr(arithexprSyn, op);                                                    // boolexpr.syn = arithexpr1.syn
@@ -316,8 +313,8 @@ public class InterpreterEx4Grammar {
     private String boolop() {
         Token token = lex.current();
         String syn = null;
-        // match the first set
-        if(token.match(LESS_THAN) || token.match(LESS_THAN_OR_EQUAL) || token.match(GREATER_THAN) || token.match(GREATER_THAN_OR_EQUAL) || token.match(EQUAL)) {
+        // match4Ex4Grammar the first set
+        if(token.match4Ex4Grammar(LESS_THAN) || token.match4Ex4Grammar(LESS_THAN_OR_EQUAL) || token.match4Ex4Grammar(GREATER_THAN) || token.match4Ex4Grammar(GREATER_THAN_OR_EQUAL) || token.match4Ex4Grammar(EQUAL)) {
             syn = token.getLexeme();            // boolop.op = token.lexeme
             lex.next();
         }

@@ -42,7 +42,7 @@ public class InterpreterEx2Grammar {
     public void interpret(String context){
         this.lex = new Lex(context);
         program(true);                      // 开始执行解释
-        if(!lex.current().match2(END))
+        if(!lex.current().match4Ex2Grammar(END))
             throw new InterpreterException(lex.current());
     }
 
@@ -60,14 +60,14 @@ public class InterpreterEx2Grammar {
     public void program(boolean exec){
         Token token = lex.current();
         // 产生式1的firstSet为{, int, real
-        if(token.match2(OPEN_BRACE)) {
+        if(token.match4Ex2Grammar(OPEN_BRACE)) {
             compoundstmt(exec);
         }
     }
     public void compoundstmt(boolean exec){
         Token token = lex.current();
-        // match2 the first set
-        if(token.match2(OPEN_BRACE)) {
+        // match4Ex2Grammar the first set
+        if(token.match4Ex2Grammar(OPEN_BRACE)) {
             lex.match2(OPEN_BRACE);
             stmts(exec);
             lex.match2(CLOSE_BRACE);
@@ -76,8 +76,8 @@ public class InterpreterEx2Grammar {
 
     private void stmts(boolean exec) {
         Token token = lex.current();
-        // match2 the first set
-        if(token.match2(OPEN_BRACE) || token.match2(IF) || token.match2(ID) || token.match2(WHILE)) {
+        // match4Ex2Grammar the first set
+        if(token.match4Ex2Grammar(OPEN_BRACE) || token.match4Ex2Grammar(IF) || token.match4Ex2Grammar(ID) || token.match4Ex2Grammar(WHILE)) {
             stmt(exec);
             stmts(exec);
         }
@@ -85,21 +85,21 @@ public class InterpreterEx2Grammar {
 
     private void stmt(boolean exec) {
         Token token = lex.current();
-        // match2 the first set
-        if(token.match2(OPEN_BRACE)) {
+        // match4Ex2Grammar the first set
+        if(token.match4Ex2Grammar(OPEN_BRACE)) {
             compoundstmt(exec);
-        } else if(token.match2(IF)) {
+        } else if(token.match4Ex2Grammar(IF)) {
             ifstmt(exec);
-        } else if(token.match2(ID)) {
+        } else if(token.match4Ex2Grammar(ID)) {
             assgstmt(exec);
-        } else if(token.match2(WHILE)) {
+        } else if(token.match4Ex2Grammar(WHILE)) {
             whilestmt(exec);
         }
     }
 
     private void whilestmt(boolean exec) {
         Token token = lex.current();
-        if(token.match2(WHILE)) {
+        if(token.match4Ex2Grammar(WHILE)) {
             boolean condition;
             do {
                 int currPos = lex.getCurrPos();
@@ -118,8 +118,8 @@ public class InterpreterEx2Grammar {
 
     private void assgstmt(boolean exec) {
         Token token = lex.current();
-        // match2 the first set
-        if(token.match2(ID)) {
+        // match4Ex2Grammar the first set
+        if(token.match4Ex2Grammar(ID)) {
             String id = lex.match2(ID).getLexeme();
             lex.match2(IS);
             Number syn = arithexpr();       // id.val = arithexpr.syn
@@ -142,8 +142,8 @@ public class InterpreterEx2Grammar {
     private Number arithexpr() {
         Token token = lex.current();
         Number syn = null;
-        // match2 the first set
-        if(token.match2(OPEN_PARENTHESES) || token.match2(ID) || token.match2(NUM)) {
+        // match4Ex2Grammar the first set
+        if(token.match4Ex2Grammar(OPEN_PARENTHESES) || token.match4Ex2Grammar(ID) || token.match4Ex2Grammar(NUM)) {
             Number multexprSyn = multexpr();
             syn = arithexprprime(multexprSyn);              // arithexprprime.inh = multexpr.syn
         }
@@ -197,8 +197,8 @@ public class InterpreterEx2Grammar {
     private Number arithexprprime(Number inh) {
         Token token = lex.current();
         Number syn = inh;       // 当arithexprprime为epsilon的时候，即只存在左操作数，不存在运算符和右操作数的时候，运算的结果应该是左操作数的值
-        // match2 the first set
-        if(token.match2(PLUS)) {
+        // match4Ex2Grammar the first set
+        if(token.match4Ex2Grammar(PLUS)) {
             lex.match2(PLUS);
             Number multexprSyn = multexpr();
             if(multexprSyn == null)
@@ -207,7 +207,7 @@ public class InterpreterEx2Grammar {
                 syn = arithexprprime(inh.intValue() + multexprSyn.intValue());  // arithexprprime.syn = arithexprprime1.syn
             else
                 syn = arithexprprime(inh.doubleValue() + multexprSyn.doubleValue());
-        } else if(token.match2(MINUS)) {
+        } else if(token.match4Ex2Grammar(MINUS)) {
             lex.match2(MINUS);
             Number multexprSyn = multexpr();
             if(inh instanceof Integer && multexprSyn instanceof  Integer)       // arithexprprime1.inh = arithexprprime.inh - multexpr.syn
@@ -221,8 +221,8 @@ public class InterpreterEx2Grammar {
     private Number multexpr() {
         Token token = lex.current();
         Number syn = null;
-        // match2 the first set
-        if(token.match2(OPEN_PARENTHESES) || token.match2(ID) || token.match2(NUM)) {
+        // match4Ex2Grammar the first set
+        if(token.match4Ex2Grammar(OPEN_PARENTHESES) || token.match4Ex2Grammar(ID) || token.match4Ex2Grammar(NUM)) {
             Number simpleexprSyn = simpleexpr();         // multexprprime.inh = simpleexpr.syn
             syn = multexprprime(simpleexprSyn);         // multexpr.syn = multexprprime.syn
         }
@@ -232,8 +232,8 @@ public class InterpreterEx2Grammar {
     private Number multexprprime(Number inh) {
         Token token = lex.current();
         Number syn = inh;
-        // match2 the first set
-        if(token.match2(MULTIPLY)) {
+        // match4Ex2Grammar the first set
+        if(token.match4Ex2Grammar(MULTIPLY)) {
             lex.match2(MULTIPLY);
             Number simpleexprSyn = simpleexpr();
             if(simpleexprSyn == null)
@@ -242,7 +242,7 @@ public class InterpreterEx2Grammar {
                 syn = arithexprprime(inh.intValue() * simpleexprSyn.intValue());    // multexprprime.syn = arithexprprime1.syn
             else
                 syn = arithexprprime(inh.doubleValue() * simpleexprSyn.doubleValue());
-        } else if(token.match2(DIVIDE)) {
+        } else if(token.match4Ex2Grammar(DIVIDE)) {
             lex.match2(DIVIDE);
             Number simpleexprSyn = simpleexpr();
             if(inh instanceof Integer && simpleexprSyn instanceof Integer)             // arithexprprime1.inh = multexprprime.inh / simpleexpr.syn
@@ -256,15 +256,15 @@ public class InterpreterEx2Grammar {
     private Number simpleexpr() {
         Token token = lex.current();
         Number syn = null;
-        // match2 the first set
-        if(token.match2(OPEN_PARENTHESES)) {
+        // match4Ex2Grammar the first set
+        if(token.match4Ex2Grammar(OPEN_PARENTHESES)) {
             lex.match2(OPEN_PARENTHESES);
             syn = arithexpr();              // simpleexpr.syn = arithexpr.syn
             lex.match2(CLOSE_PARENTHESES);
-        } else if(token.match2(ID)) {
+        } else if(token.match4Ex2Grammar(ID)) {
             syn = variableTable.getValue(token.getLexeme());        // simpleexpr.syn = ID.lexeme
             lex.next();
-        } else if(token.match2(NUM)) {
+        } else if(token.match4Ex2Grammar(NUM)) {
             syn = token.getLexval();                        // simpleexpr.syn = REAL_NUM.lexval
             lex.next();
         }
@@ -273,8 +273,8 @@ public class InterpreterEx2Grammar {
 
     private void ifstmt(boolean exec) {
         Token token = lex.current();
-        // match2 the first set
-        if(token.match2(IF)) {
+        // match4Ex2Grammar the first set
+        if(token.match4Ex2Grammar(IF)) {
             lex.match2(IF);
             lex.match2(OPEN_PARENTHESES);
             Boolean boolsyn = boolexpr();
@@ -289,8 +289,8 @@ public class InterpreterEx2Grammar {
     private Boolean boolexpr() {
         Token token = lex.current();
         Boolean syn = null;
-        // match2 the first set
-        if(token.match2(OPEN_PARENTHESES) || token.match2(ID) || token.match2(NUM)) {
+        // match4Ex2Grammar the first set
+        if(token.match4Ex2Grammar(OPEN_PARENTHESES) || token.match4Ex2Grammar(ID) || token.match4Ex2Grammar(NUM)) {
             Number arithexprSyn = arithexpr();                                                      // arithexpr1.inh = arithexpr.syn
             String op = boolop();                                                                   // arithexpr1.op = boolop.op
             syn = arithexpr(arithexprSyn, op);                                                    // boolexpr.syn = arithexpr1.syn
@@ -301,8 +301,8 @@ public class InterpreterEx2Grammar {
     private String boolop() {
         Token token = lex.current();
         String syn = null;
-        // match2 the first set
-        if(token.match2(LESS_THAN) || token.match2(LESS_THAN_OR_EQUAL) || token.match2(GREATER_THAN) || token.match2(GREATER_THAN_OR_EQUAL) || token.match2(EQUAL)) {
+        // match4Ex2Grammar the first set
+        if(token.match4Ex2Grammar(LESS_THAN) || token.match4Ex2Grammar(LESS_THAN_OR_EQUAL) || token.match4Ex2Grammar(GREATER_THAN) || token.match4Ex2Grammar(GREATER_THAN_OR_EQUAL) || token.match4Ex2Grammar(EQUAL)) {
             syn = token.getLexeme();            // boolop.op = token.lexeme
             lex.next();
         }

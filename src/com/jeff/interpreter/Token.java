@@ -16,7 +16,7 @@ public class Token {
     }
 
     // 输入的token 匹配产生式中的 lexeme
-    public boolean match(String lexeme){
+    public boolean match4Ex4Grammar(String lexeme){
         // 如果lexeme是INT_NUM，由于token的lexeme为真实值，因此需要匹配TokenType是否为INT_NUM
         if(lexeme.equals(InterpreterEx4Grammar.INT_NUM) && this.tokenType == TokenType.INT_NUM)
             return true;
@@ -32,7 +32,7 @@ public class Token {
 
     // 输入的token 匹配产生式中的 lexeme
     // ex2的文法
-    public boolean match2(String lexeme){
+    public boolean match4Ex2Grammar(String lexeme){
         // 如果lexeme是INT_NUM，由于token的lexeme为真实值，因此需要匹配TokenType是否为INT_NUM
         if(lexeme.equals(InterpreterEx2Grammar.NUM) && (this.tokenType == TokenType.INT_NUM || this.tokenType == TokenType.REAL_NUM))
             return true;

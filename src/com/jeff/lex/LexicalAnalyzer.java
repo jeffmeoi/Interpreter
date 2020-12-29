@@ -7,7 +7,7 @@ public class LexicalAnalyzer {
 
     private static final Pattern KEYWORD = Pattern.compile("^((int)|(real)|(if)|(then)|(else)|(while))$");
     private static final Pattern DELIMITER = Pattern.compile("^([(){};,])$");
-    private static final Pattern NUMBER = Pattern.compile("^((\\d+\\.\\d+([Ee](\\+|-)?\\d+)?)|(\\d+[Ee](\\+|-)?\\d+)|(\\d+))$");
+    private static final Pattern NUMBER = Pattern.compile("^((\\d+\\.\\d+([Ee]([+\\-])?\\d+)?)|(\\d+[Ee]([+\\-])?\\d+)|(\\d+))$");
     private static final Pattern OPERATOR = Pattern.compile("^((==)|(<=)|(>=)|(!=)|[+\\-/*=<>])$");
     private static final Pattern IDENTIFIER = Pattern.compile("^([a-zA-Z][a-zA-Z0-9]*)$");
 

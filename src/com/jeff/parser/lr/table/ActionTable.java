@@ -18,6 +18,7 @@ public class ActionTable {
 
         constructShiftPart();
         constructReducePart(startSymbol);
+        checkConflicts();
     }
 
     private void constructShiftPart(){

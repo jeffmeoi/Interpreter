@@ -63,7 +63,7 @@ public class Lex implements Iterator<Token> {
      */
     public Token match(String tokenStr){
         Token token = current();
-        if(!token.match(tokenStr))
+        if(!token.match4Ex4Grammar(tokenStr))
             throw new NotMatchedException(token, tokenStr);
         next();
         return token;
@@ -78,7 +78,7 @@ public class Lex implements Iterator<Token> {
      */
     public Token match2(String tokenStr){
         Token token = current();
-        if(!token.match2(tokenStr))
+        if(!token.match4Ex2Grammar(tokenStr))
             throw new NotMatchedException(token, tokenStr);
         next();
         return token;

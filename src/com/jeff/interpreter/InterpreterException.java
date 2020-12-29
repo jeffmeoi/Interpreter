@@ -1,7 +1,7 @@
 package com.jeff.interpreter;
 
 public class InterpreterException extends RuntimeException {
-    private Token current;
+    private final Token current;
     public InterpreterException(Token current) {
         this.current = current;
     }
