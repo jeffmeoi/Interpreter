@@ -79,8 +79,8 @@ public class LLParser {
      * 输出解释树
      * @param space tab长度
      */
-    public void outputParseTree(int space){
-        recursiveOutputParseTree(new LinkedList<>(Collections.singletonList(LLParsingTable.PROGRAM)), new LinkedList<>(ruleList), 0, space);
+    public String outputParseTree(int space){
+        return recursiveOutputParseTree(new LinkedList<>(Collections.singletonList(LLParsingTable.PROGRAM)), new LinkedList<>(ruleList), 0, space).toString();
     }
 
 
@@ -91,19 +91,21 @@ public class LLParser {
      * @param layer 缩进的层数，第一层缩进0层
      * @param space tab的长度
      */
-    private void recursiveOutputParseTree(LinkedList<Symbol> symbolList, LinkedList<ProductionRule> ruleList, int layer, int space) {
+    private StringBuilder recursiveOutputParseTree(LinkedList<Symbol> symbolList, LinkedList<ProductionRule> ruleList, int layer, int space) {
+        StringBuilder sb = new StringBuilder();
         // 遍历该层的所有符号
         for (Symbol symbol : symbolList) {
             // 输出缩进和符号
             for(int i = 0; i < layer*space; i++)
-                System.out.print(" ");
-            System.out.println(symbol);
+                sb.append(" ");
+            sb.append(symbol).append(System.lineSeparator());
             // 如果该符号为非终结符，则用栈顶的产生式匹配该符号，并移除栈顶，递归进入下一层
             if(symbol instanceof NonTerminal) {
                 ProductionRule rule = ruleList.pop();
-                recursiveOutputParseTree(new LinkedList<>(rule.getRight()), ruleList, layer + 1, space);
+                sb.append(recursiveOutputParseTree(new LinkedList<>(rule.getRight()), ruleList, layer + 1, space));
             }
         }
+        return sb;
     }
 
 }

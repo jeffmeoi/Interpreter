@@ -47,10 +47,9 @@ public class InterpreterEx2Grammar {
     }
 
 
-
-    // 打印解释完成后的符号表
-    public void print() {
-        System.out.println(variableTable);
+    @Override
+    public String toString() {
+        return variableTable.toString();
     }
 
     /**

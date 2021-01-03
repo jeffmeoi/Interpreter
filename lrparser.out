@@ -1,0 +1,12 @@
+program
+ => compoundstmt 
+ => { stmts } 
+ => { stmt stmts } 
+ => { stmt } 
+ => { assgstmt } 
+ => { ID = arithexpr ; } 
+ => { ID = multexpr arithexprprime ; } 
+ => { ID = multexpr ; } 
+ => { ID = simpleexpr multexprprime ; } 
+ => { ID = simpleexpr ; } 
+ => { ID = NUM ; } 

@@ -1,2 +1,1 @@
-program stmt compoundstmt stmts ifstmt whilestmt assgstmt
-boolexpr boolop arithexpr arithexprprime multexpr multexprprime simpleexpr decl decls
+program stmt compoundstmt stmts ifstmt whilestmt assgstmt boolexpr boolop arithexpr arithexprprime multexpr multexprprime simpleexpr decl decls
