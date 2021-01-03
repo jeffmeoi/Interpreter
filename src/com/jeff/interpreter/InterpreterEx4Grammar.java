@@ -45,7 +45,7 @@ public class InterpreterEx4Grammar {
         this.lex = new Lex(context);
         program(true);                      // 开始执行解释
         if(!lex.current().match4Ex4Grammar(END))
-            throw new InterpreterException(lex.current());
+            throw new InterpretException(lex.current());
     }
 
 

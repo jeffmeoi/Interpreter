@@ -1,8 +1,8 @@
 package com.jeff.interpreter;
 
-public class InterpreterException extends RuntimeException {
+public class InterpretException extends RuntimeException {
     private final Token current;
-    public InterpreterException(Token current) {
+    public InterpretException(Token current) {
         this.current = current;
     }
 

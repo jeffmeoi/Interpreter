@@ -24,7 +24,7 @@ public class Main {
         try {
             interpreter.interpret(context);
             interpreter.print();
-        } catch (NotMatchedException | VariableNotExistException | TypeCheckException | InterpreterException | ExpressionException e) {
+        } catch (NotMatchedException | VariableNotExistException | TypeCheckException | InterpretException | ExpressionException e) {
             System.out.println(e);
         }
     }

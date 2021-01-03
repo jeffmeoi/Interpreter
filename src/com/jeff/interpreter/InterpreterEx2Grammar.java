@@ -43,7 +43,7 @@ public class InterpreterEx2Grammar {
         this.lex = new Lex(context);
         program(true);                      // 开始执行解释
         if(!lex.current().match4Ex2Grammar(END))
-            throw new InterpreterException(lex.current());
+            throw new InterpretException(lex.current());
     }
 
 
