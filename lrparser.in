@@ -1,1 +1,13 @@
-{ ID = NUM ; }
+{
+ID = NUM ;
+ID = NUM ;
+ID = NUM ;
+ID = NUM ;
+ID = NUM ;
+while ( ID > NUM ) { ID = ID + NUM ; ID = ID - NUM ; }
+if ( ID >= NUM ) then ID = ID + ID ; else { ID = ID * ( ID + NUM ) ; ID = ID + ID ; }
+if ( ID <= NUM ) then ID = ID - ID ; else ID = ID + ID / NUM ;
+if ( ID == ID ) then ID = ID - ID ; else ID = ID - ID / NUM ;
+if ( ID > NUM ) then ID = ID - NUM ; else ID = ID + NUM ;
+if ( ID < NUM ) then ID = ID + NUM ; else ID = ID - NUM ;
+}

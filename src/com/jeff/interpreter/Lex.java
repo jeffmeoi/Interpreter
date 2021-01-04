@@ -16,7 +16,7 @@ public class Lex implements Iterator<Token> {
     private static final Pattern INT_NUM = Pattern.compile("^\\d+$");
     private static final Pattern REAL_NUM = Pattern.compile("^\\d+\\.\\d+$");
     private static final Pattern OPERATOR = Pattern.compile("^((==)|(<=)|(>=)|(!=)|[+\\-/*=<>])$");
-    private static final Pattern IDENTIFIER = Pattern.compile("^([a-zA-Z])$");
+    private static final Pattern IDENTIFIER = Pattern.compile("^([a-zA-Z]+)$");
 
     private final List<String> tokenStringList;
     private final List<Token> tokenList;
